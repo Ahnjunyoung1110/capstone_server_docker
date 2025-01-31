@@ -1,0 +1,17 @@
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+  db:
+    image: mariadb:10.11
+    volumes:
+      - dev-db-data:/var/lib/mariadb/data
+    environment:
+      - MARIADB_ROOT_PASSWORD=some_root_password
+      - MARIADB_DATABASE=devdb
+      - MARIADB_USER=devuser
+      - MARIADB_PASSWORD=changeme
+volumes: #외부 저장소 정의
+  dev-db-data:
