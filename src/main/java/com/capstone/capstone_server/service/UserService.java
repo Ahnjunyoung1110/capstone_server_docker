@@ -5,7 +5,6 @@ import com.capstone.capstone_server.entity.UserEntity;
 import com.capstone.capstone_server.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -39,16 +38,24 @@ public class UserService {
         return userRepository.save(userEntity);
     }
 
-    public UserEntity findByIdAndPassword(UserEntity userEntity, String password) {
-        if(userEntity == null){
+    public UserEntity findByIdAndPassword(String id, String password) {
+        if(id == null){
             throw new IllegalArgumentException("userEntity is null");
         }
         if(password == null) {
             throw new IllegalArgumentException("password is null");
         }
-        String EncryptedPassword = passwordEncoder.encode(userEntity.getPassword());
-        userEntity.setPassword(EncryptedPassword);
-        return userRepository.findByIdAndPassword(userEntity.getId(), password);
+        UserEntity userEntity = userRepository.findById(id);
+        
+        // 등록된 아이디가 존재하지 않는 경우
+        if(userEntity == null) {
+            throw new IllegalArgumentException("Id is wrong");
+        }
+        // 패스워드가 일치하지 않는 경우
+        if(!passwordEncoder.matches(password, userEntity.getPassword()))
+            throw new IllegalArgumentException("Password is wrong");
+        
+        return userEntity;
     }
 
 }
