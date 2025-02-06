@@ -27,7 +27,6 @@ public class UserController {
     // 회원가입 메서드
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody UserDTO userDTO) {
-
         // DTO를 엔티티로 변경
         UserEntity userEntity = UserEntity.builder()
                 .id(userDTO.getId())
