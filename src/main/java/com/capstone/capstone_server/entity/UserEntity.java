@@ -16,10 +16,10 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String uuid; // UUID를 기본키로 사용
 
-    @NonNull
+    @Column(nullable = false)
     private String id; // 사용자 계정 ID(고유값)
 
-    @NonNull
+    @Column(nullable = false)
     private String password; // 비밀번호 (해싱 후 저장 필요)
 
     private String name; // 사용자 이름
@@ -30,11 +30,13 @@ public class UserEntity {
 
     private String profession; // 사용자 직업(의사, 간호사 등)
 
-    @Column(name = "hospital_id") // 추후 구현 예정
-    private String hospitalId;
+    @ManyToOne
+    @JoinColumn(name = "hospitalId")
+    private HospitalEntity hospital;
 
-    @Column(name = "permission_id") // 추후 구현 예정, 권한임
-    private String permissionId;
+    @ManyToOne
+    @JoinColumn(name = "permissionId")
+    private PermissionEntity permission;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt; // 계정 생성일
