@@ -7,7 +7,7 @@ import com.capstone.capstone_server.entity.HospitalEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface PermissionMapper {
   PermissionMapper INSTANCE = Mappers.getMapper(PermissionMapper.class);
 

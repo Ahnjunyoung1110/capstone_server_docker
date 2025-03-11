@@ -8,7 +8,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreRemove;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -62,7 +61,7 @@ public class UserEntity {
   private Date updatedAt; // 마지막 업데이트 일
 
   @Builder.Default
-  private Boolean isValid = true;
+  private Boolean valid = true;
 
 
   // 최초 생성시 실행

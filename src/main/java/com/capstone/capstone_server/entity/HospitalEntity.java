@@ -39,7 +39,7 @@ public class HospitalEntity {
   private Date updatedAt;
 
   @Builder.Default
-  private Boolean isValid = true;
+  private Boolean valid = true;
 
 
   // 최초 생성시 실행
@@ -57,11 +57,4 @@ public class HospitalEntity {
     this.updatedAt = new Date();
   }
 
-  // 삭제시 실행
-  // 업데이트된 시간을 변경하고 isvalid를 false로 변경한다.
-  @PreRemove
-  protected void onRemove() {
-    this.updatedAt = new Date();
-    this.isValid = false;
-  }
 }

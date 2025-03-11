@@ -24,7 +24,7 @@ public class HospitalService {
 
   // 활성화된 모든 병원 객체 리턴
   public List<HospitalDTO> getAllHospitals() {
-    return hospitalMapper.toDtoList(hospitalRepository.findByIsValidTrue());
+    return hospitalMapper.toDtoList(hospitalRepository.findByValidTrue());
   }
 
   // 신규 병원 생성
@@ -88,7 +88,7 @@ public class HospitalService {
       throw new IllegalArgumentException("Such hospital not found");
     }
 
-    findEntity.setIsValid(false);
+    findEntity.setValid(false);
     HospitalEntity responseEntity = hospitalRepository.save(requestEntity);
 
     return hospitalMapper.toDto(responseEntity);

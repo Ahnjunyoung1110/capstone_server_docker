@@ -11,6 +11,6 @@ public interface HospitalRepository extends JpaRepository<HospitalEntity, Intege
 
   Optional<HospitalEntity> findByHospitalNameOrHospitalCall(String name, String call);
 
-  List<HospitalEntity> findByIsValidTrue();
+  List<HospitalEntity> findByValidTrue();
 
 }

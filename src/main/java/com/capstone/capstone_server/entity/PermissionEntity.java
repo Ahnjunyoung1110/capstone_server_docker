@@ -27,7 +27,7 @@ public class PermissionEntity {
   private Integer permissionId;
 
   private String permissionName;
-  
+
   @Column(nullable = false)
   private double permissionLevel;
 
@@ -38,7 +38,7 @@ public class PermissionEntity {
   private Date updatedAt;
 
   @Builder.Default
-  private boolean isValid = true;
+  private boolean valid = true;
 
 
   // 최초 생성시 실행
