@@ -1,12 +1,20 @@
 package com.capstone.capstone_server.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreRemove;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.NotNull;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Date;
 
 @Entity
 @Builder
@@ -14,28 +22,46 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HospitalEntity {
-    @Id
-    private int hospitalId;
 
-    private String hospitalName;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer hospitalId;
 
-    private String hospitalCall;
+  @NotNull
+  private String hospitalName;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+  private String hospitalCall;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date createdAt;
 
-    @Builder.Default
-    private Boolean isValid = true;
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date updatedAt;
+
+  @Builder.Default
+  private Boolean isValid = true;
 
 
-    // 최초 생성시 실행
-    // createdAt 과 updatedAt을 현재시간으로 설정한다.
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
-    }
+  // 최초 생성시 실행
+  // createdAt 과 updatedAt을 현재시간으로 설정한다.
+  @PrePersist
+  protected void onCreate() {
+    this.createdAt = new Date();
+    this.updatedAt = new Date();
+  }
+
+  // 업데이트시 실행
+  // 업데이트된 시간을 변경한다.
+  @PreUpdate
+  protected void onUpdate() {
+    this.updatedAt = new Date();
+  }
+
+  // 삭제시 실행
+  // 업데이트된 시간을 변경하고 isvalid를 false로 변경한다.
+  @PreRemove
+  protected void onRemove() {
+    this.updatedAt = new Date();
+    this.isValid = false;
+  }
 }

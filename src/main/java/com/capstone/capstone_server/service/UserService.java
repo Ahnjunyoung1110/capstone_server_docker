@@ -22,6 +22,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+
     /**
      *
      * @param userEntity
@@ -35,6 +36,7 @@ public class UserService {
             log.warn("User with id {} already exists", userEntity.getId());
             throw new IllegalArgumentException("Same user id is already exists");
         }
+
         String EncryptedPassword = passwordEncoder.encode(userEntity.getPassword());
         userEntity.setPassword(EncryptedPassword);
         return userRepository.save(userEntity);
@@ -43,6 +45,7 @@ public class UserService {
     /*
     로그인 할때 입력된 ID와 비밀번호가 DB내에 존재하는지 확인하는 함수
      */
+
     public UserEntity findByIdAndPassword(String id, String password) {
         if(id == null){
             throw new IllegalArgumentException("userEntity is null");
@@ -63,5 +66,7 @@ public class UserService {
         
         return userEntity;
     }
+
+
 
 }
