@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
 public class UserEntity {
 
   @Id
@@ -33,7 +33,7 @@ public class UserEntity {
   private String uuid; // UUID를 기본키로 사용
 
   @Column(nullable = false)
-  private String id; // 사용자 계정 ID(고유값)
+  private String username; // 사용자 계정 ID(고유값)
 
   @Column(nullable = false)
   private String password; // 비밀번호 (해싱 후 저장 필요)
@@ -61,7 +61,7 @@ public class UserEntity {
   private Date updatedAt; // 마지막 업데이트 일
 
   @Builder.Default
-  private Boolean valid = true;
+  private Boolean valid = false;
 
 
   // 최초 생성시 실행
