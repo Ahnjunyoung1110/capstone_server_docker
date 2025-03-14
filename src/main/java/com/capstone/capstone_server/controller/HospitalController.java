@@ -3,13 +3,15 @@ package com.capstone.capstone_server.controller;
 
 import com.capstone.capstone_server.dto.HospitalDTO;
 import com.capstone.capstone_server.entity.HospitalEntity;
+import com.capstone.capstone_server.mapper.HospitalMapper;
 import com.capstone.capstone_server.service.HospitalService;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,9 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class HospitalController {
 
   final HospitalService hospitalService;
+  final HospitalMapper hospitalMapper;
 
-  public HospitalController(HospitalService hospitalService) {
+  public HospitalController(HospitalService hospitalService, HospitalMapper hospitalMapper) {
     this.hospitalService = hospitalService;
+    this.hospitalMapper = hospitalMapper;
   }
 
   /*
@@ -30,11 +34,13 @@ public class HospitalController {
    */
   @GetMapping("/getallHs")
   public ResponseEntity<?> getHospitalService() {
-    List<HospitalDTO> allHospitals = hospitalService.getAllHospitals();
+    log.info("getAllHospitalService request");
+    List<HospitalEntity> allHospitals = hospitalService.getAllHospitals();
 
+    List<HospitalDTO> allHospitalsDTO = hospitalMapper.toDtoList(allHospitals);
 
     // 반환
-    return ResponseEntity.ok().body(allHospitals);
+    return ResponseEntity.ok().body(allHospitalsDTO);
   }
 
 
@@ -43,7 +49,13 @@ public class HospitalController {
    */
   @PostMapping("/addHs")
   public ResponseEntity<?> addHospital(@RequestBody HospitalDTO hospitalDTO) {
-    HospitalDTO createdHospital = hospitalService.createHospital(hospitalDTO);
+    log.info("addHospital request: {}", hospitalDTO);
+
+    HospitalEntity hospitalEntity = hospitalMapper.toEntity(hospitalDTO);
+
+    log.info("addHospital response: {}", hospitalEntity);
+
+    HospitalEntity createdHospital = hospitalService.createHospital(hospitalEntity);
 
     return ResponseEntity.ok().body(createdHospital);
   }
@@ -51,9 +63,15 @@ public class HospitalController {
   /*
   현재 병원을 업데이트 하는 컨트롤러
    */
-  @PostMapping("/updateHs")
+  @PutMapping("/updateHs")
   public ResponseEntity<?> updateHospital(@RequestBody HospitalDTO hospitalDTO) {
-    HospitalDTO updatedHospital = hospitalService.updateHospital(hospitalDTO);
+    log.info("updateHospital request: {}", hospitalDTO.getHospitalId());
+
+    HospitalEntity hospitalEntity = hospitalMapper.toEntity(hospitalDTO);
+
+    HospitalEntity updatedHospital = hospitalService.updateHospital(hospitalEntity);
+
+    HospitalDTO updatedHospitalDTO = hospitalMapper.toDto(updatedHospital);
 
     return ResponseEntity.ok().body(updatedHospital);
   }
@@ -61,10 +79,17 @@ public class HospitalController {
   /*
   병원을 삭제하는 컨트롤러
    */
+  @DeleteMapping("/deleteHs")
   public ResponseEntity<?> deleteHospital(@RequestBody HospitalDTO hospitalDTO) {
-    hospitalService.deleteHospital(hospitalDTO);
+    log.info("deleteHospital request: {}", hospitalDTO.getHospitalId());
 
-    return ResponseEntity.ok().build();
+    HospitalEntity hospitalEntity = hospitalMapper.toEntity(hospitalDTO);
+
+    HospitalEntity deletedEntity = hospitalService.deleteHospital(hospitalEntity);
+
+    HospitalDTO deletedHospitalDTO = hospitalMapper.toDto(deletedEntity);
+
+    return ResponseEntity.ok().body(deletedHospitalDTO);
   }
 
 

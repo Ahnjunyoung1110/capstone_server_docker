@@ -8,7 +8,6 @@ import com.capstone.capstone_server.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +30,7 @@ public class UserController {
   // 회원가입 메서드
   @PostMapping("/signup")
   public ResponseEntity<?> signUp(@RequestBody UserDTO userDTO) {
+    log.info("Sign up user request: {}", userDTO);
     // DTO를 엔티티로 변경
     UserEntity userEntity = UserEntity.builder()
         .username(userDTO.getUsername())
@@ -51,6 +51,7 @@ public class UserController {
   // 로그인 메서드
   @PostMapping("/signin")
   public ResponseEntity<?> signIn(@RequestBody UserDTO userDTO) {
+    log.info("Sign in user request: {}", userDTO);
 
     // 주어진 ID와 password를 이용해서 유저를 검색
     UserEntity userEntity = userService.findByIdAndPassword(userDTO.getUsername(),

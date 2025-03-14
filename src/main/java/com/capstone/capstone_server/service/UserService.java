@@ -1,6 +1,7 @@
 package com.capstone.capstone_server.service;
 
 
+import com.capstone.capstone_server.entity.HospitalEntity;
 import com.capstone.capstone_server.entity.UserEntity;
 import com.capstone.capstone_server.repository.UserRepository;
 import java.util.Optional;
@@ -67,6 +68,4 @@ public class UserService {
 
     return userEntity;
   }
-
-
 }

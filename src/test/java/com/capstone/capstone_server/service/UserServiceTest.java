@@ -34,11 +34,11 @@ class UserServiceTest {
     //생성에 성공 경우 테스트
     void createUser_success() {
         UserEntity userEntity = new UserEntity();
-        userEntity.setId("testUserId");
+        userEntity.setUuid("testUserId");
         userEntity.setPassword("testPassword");
         String originalPassword = userEntity.getPassword();
         //Mock 설정, ID가 존재하지 않는 상태
-        when(userRepository.existsById(userEntity.getId())).thenReturn(false);
+        when(userRepository.existsById(userEntity.getUuid())).thenReturn(false);
         when(userRepository.save(userEntity)).thenReturn(userEntity);
         
         // 생성 후 테스트
@@ -64,11 +64,11 @@ class UserServiceTest {
     // 해당 ID가 이미 존재하는 경우
     void createUser_fail2() {
         UserEntity userEntity = new UserEntity();
-        userEntity.setId("testUserId");
+        userEntity.setUuid("testUserId");
         userEntity.setPassword("testPassword");
         
         // 이미 존재한다고 Mock 설정
-        when(userRepository.existsById(userEntity.getId())).thenReturn(true);
+        when(userRepository.existsById(userEntity.getUuid())).thenReturn(true);
 
         Exception exception = assertThrows(IllegalArgumentException.class,() -> userService.createUser(userEntity));
 
