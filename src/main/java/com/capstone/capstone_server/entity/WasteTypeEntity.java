@@ -1,18 +1,15 @@
 package com.capstone.capstone_server.entity;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.persistence.UniqueConstraint;
 import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,46 +22,32 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
-public class UserEntity {
+public class WasteTypeEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
-  private String uuid; // UUID를 기본키로 사용
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer typeId;
 
+
+  // 명칭
   @Column(nullable = false)
-  private String username; // 사용자 계정 ID(고유값)
+  private String typeName;
 
+
+  // 보관기일
   @Column(nullable = false)
-  private String password; // 비밀번호 (해싱 후 저장 필요)
+  private Integer period;
 
-  private String name; // 사용자 이름
 
-  private String phoneNumber; // 사용자 전화번호
 
-  private String email; // 사용자 이메일
-
-  private String profession; // 사용자 직업(의사, 간호사 등)
-
-  @ManyToOne
-  @JoinColumn(name = "hospitalId", nullable = false)
-  private HospitalEntity hospital;
-
-  @ManyToOne
-  @JoinColumn(name = "permissionId", nullable = false)
-  private PermissionEntity permission;
+  @Builder.Default
+  private Boolean valid = true;
 
   @Temporal(TemporalType.TIMESTAMP)
   private Date createdAt; // 계정 생성일
 
   @Temporal(TemporalType.TIMESTAMP)
   private Date updatedAt; // 마지막 업데이트 일
-
-  @
-
-  @Builder.Default
-  private Boolean valid = false;
-
 
   // 최초 생성시 실행
   // createdAt 과 updatedAt을 현재시간으로 설정한다.

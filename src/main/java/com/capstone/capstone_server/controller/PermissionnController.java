@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Slf4j
-@RequestMapping("permission")
+@RequestMapping("admin/permission")
 
 // 유저의 권한을 관리하는 컨트롤러
 public class PermissionnController {
@@ -43,7 +43,8 @@ public class PermissionnController {
 
     List<PermissionEntity> createdEntities = permissionService.createPermission(permissionEntity);
 
-    List<PermissionDTO> createdDTO = permissionMapper.permissionEntityToPermissionDTOList(createdEntities);
+    List<PermissionDTO> createdDTO = permissionMapper.permissionEntityToPermissionDTOList(
+        createdEntities);
 
     return ResponseEntity.ok().body(createdDTO);
   }
@@ -54,7 +55,8 @@ public class PermissionnController {
 
     List<PermissionEntity> updatedEntity = permissionService.createPermission(permissionEntity);
 
-    List<PermissionDTO> updatedDTO = permissionMapper.permissionEntityToPermissionDTOList(updatedEntity);
+    List<PermissionDTO> updatedDTO = permissionMapper.permissionEntityToPermissionDTOList(
+        updatedEntity);
 
     return ResponseEntity.ok().body(updatedDTO);
   }

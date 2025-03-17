@@ -32,7 +32,6 @@ public class AuthFilter extends OncePerRequestFilter {
     {
         logger.info("Filtering request");
 
-
         // 토큰 가져오기
         String token = request.getHeader("Authorization");
 

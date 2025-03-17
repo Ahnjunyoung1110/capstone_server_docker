@@ -16,18 +16,28 @@ public class AdminFilter extends OncePerRequestFilter {
   @Value("${adminkey}")
   private String adminKey;
 
+
   @Override
   protected void doFilterInternal(HttpServletRequest httpServletRequest,
       HttpServletResponse httpServletResponse,
       FilterChain filterChain)
       throws ServletException, IOException {
 
-    logger.info("AdminFilter Request");
-    String requestKey = httpServletRequest.getHeader("X-ADMIN-KEY");
-    if (adminKey.equals(requestKey)) {
-      filterChain.doFilter(httpServletRequest, httpServletResponse);
-    } else {
-      httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    String path = httpServletRequest.getRequestURI();
+
+
+    if (path.startsWith("/hospital") || path.startsWith("/permission/")) {
+      logger.info("AdminFilter Request");
+      String requestKey = httpServletRequest.getHeader("X-ADMIN-KEY");
+      if (adminKey.equals(requestKey)) {
+        logger.info("AdminFilter Request confirm");
+        filterChain.doFilter(httpServletRequest, httpServletResponse);
+      } else {
+        logger.warn("AdminFilter Request denied");
+        httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      }
     }
+
+    filterChain.doFilter(httpServletRequest, httpServletResponse);
   }
 }

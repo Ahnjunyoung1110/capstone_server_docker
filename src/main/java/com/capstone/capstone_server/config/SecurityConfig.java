@@ -28,16 +28,16 @@ public class SecurityConfig {
   @Order(1)
   public SecurityFilterChain adminSecurityFilterChain(HttpSecurity http) throws Exception {
     http
-        .securityMatcher("/hospital/**", "/permission/**") // 🔥 이 부분을 명확하게 requestMatchers로 변경
+        .securityMatcher("/admin/**")
         .authorizeHttpRequests(authz -> authz
-            .requestMatchers("/hospital/**", "/permission/**").authenticated()
-            .anyRequest().permitAll())  // 🛑 다른 요청은 여기에 포함되지 않도록 설정
+            .anyRequest().permitAll())
         .cors(Customizer.withDefaults())
         .csrf(AbstractHttpConfigurer::disable)
-        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .httpBasic(AbstractHttpConfigurer::disable);
+        .sessionManagement(
+            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .httpBasic(AbstractHttpConfigurer::disable)
+        .addFilterBefore(adminFilter, UsernamePasswordAuthenticationFilter.class);
 
-    http.addFilterBefore(adminFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }
 
