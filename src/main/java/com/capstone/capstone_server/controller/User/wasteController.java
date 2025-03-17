@@ -1,5 +1,6 @@
-package com.capstone.capstone_server.controller;
+package com.capstone.capstone_server.controller.User;
 
+import com.capstone.capstone_server.detail.CustomUserDetails;
 import com.capstone.capstone_server.dto.WasteDTO;
 import com.capstone.capstone_server.entity.WasteEntity;
 import com.capstone.capstone_server.mapper.WasteMapper;
@@ -45,8 +46,9 @@ public class wasteController {
 
   // 유저가 속한 병원의 모든 폐기물을 리턴하는 함수
   @GetMapping("/getAllWasteHs")
-  public ResponseEntity<?> getAllWasteById(@AuthenticationPrincipal String uuid) {
+  public ResponseEntity<?> getAllWasteById(@AuthenticationPrincipal CustomUserDetails details) {
     log.info("getAllWasteById request");
+    String uuid = details.getUsername();
     List<WasteEntity> wasteEntities = wasteService.getAllWastesHs(uuid);
 
     List<WasteDTO> wasteDTOs = wasteMapper.toDTOList(wasteEntities);
@@ -55,8 +57,9 @@ public class wasteController {
 
   // 유저가 속한 병원의 활성화된 폐기물을 리턴하는 함수
   @GetMapping("/getAllWasteValidHs")
-  public ResponseEntity<?> getWasteById(@AuthenticationPrincipal String uuid) {
+  public ResponseEntity<?> getWasteById(@AuthenticationPrincipal CustomUserDetails details) {
     log.info("getWasteById request");
+    String uuid = details.getUsername();
     List<WasteEntity> wasteEntities = wasteService.getAllWastesValidHs(uuid);
 
     List<WasteDTO> wasteDTOs = wasteMapper.toDTOList(wasteEntities);
@@ -65,11 +68,12 @@ public class wasteController {
 
   // 새로운 폐기물을 생성하는 함수
   @PostMapping("/createWaste")
-  public ResponseEntity<?> createWaste(@AuthenticationPrincipal String uuid,
+  public ResponseEntity<?> createWaste(@AuthenticationPrincipal CustomUserDetails details,
       @RequestBody WasteDTO wasteDTO) {
     log.info("createWaste request");
     WasteEntity createEntity = wasteMapper.toWasteEntity(wasteDTO);
 
+    String uuid = details.getUsername();
     WasteEntity wasteEntity = wasteService.createWaste(createEntity, uuid);
 
     WasteDTO wastedto = wasteMapper.toWasteDTO(wasteEntity);
@@ -79,11 +83,12 @@ public class wasteController {
 
   // 폐기물을 업데이트하는 함수
   @PutMapping("updateWaste")
-  public ResponseEntity<?> updateWaste(@AuthenticationPrincipal String uuid,
+  public ResponseEntity<?> updateWaste(@AuthenticationPrincipal CustomUserDetails details,
       @RequestBody WasteDTO wasteDTO) {
     log.info("updateWaste request");
     WasteEntity updateEntity = wasteMapper.toWasteEntity(wasteDTO);
 
+    String uuid = details.getUsername();
     WasteEntity wasteEntity = wasteService.updateWaste(updateEntity, uuid);
 
     WasteDTO wastedto = wasteMapper.toWasteDTO(wasteEntity);

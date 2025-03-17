@@ -10,7 +10,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @RestControllerAdvice
-/**
+/*
  * 예외 처리기
  */
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -30,7 +30,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
    */
   @ExceptionHandler(ServletException.class)
   public ResponseEntity<Object> handleServletException(ServletException ex, WebRequest request) {
-    return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    String customMsg = "토큰이 틀렸어용!";
+    // ex.getMessage()
+    return new ResponseEntity<>(customMsg, HttpStatus.BAD_REQUEST);
   }
 
   /*

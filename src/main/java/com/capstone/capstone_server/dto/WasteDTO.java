@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class WasteDTO {
 
-  private Integer wasteID;
+  private Integer id;
   private String wasteName;
   private boolean wasteStatus;
 }

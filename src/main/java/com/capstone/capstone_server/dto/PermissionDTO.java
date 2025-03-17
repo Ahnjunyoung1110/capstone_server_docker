@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class PermissionDTO {
-  private Integer permissionId;
+
+  private Integer id;
   private String permissionName;
   private double permissionLevel;
 }

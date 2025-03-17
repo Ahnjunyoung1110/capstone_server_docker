@@ -26,10 +26,10 @@ public class WasteEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer wasteId;
+  private Integer id;
 
   @ManyToOne
-  @JoinColumn(name = "hospitalId", nullable = false)
+  @JoinColumn(name = "hospital_id", nullable = false)
   private HospitalEntity hospital;
 
   // 창고 주키, 업데이트 예정

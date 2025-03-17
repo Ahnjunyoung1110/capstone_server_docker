@@ -1,4 +1,4 @@
-package com.capstone.capstone_server.controller;
+package com.capstone.capstone_server.controller.Admin;
 
 
 import com.capstone.capstone_server.dto.WasteTypeDTO;
@@ -9,14 +9,15 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("wsType")
+@RequestMapping("admin/wsType")
 @RestController
 @Slf4j
+@PreAuthorize("hasRole('ADMIN')")
 public class WasteTypeController {
 
   private final WasteTypeService wasteTypeService;
@@ -38,5 +39,4 @@ public class WasteTypeController {
     return ResponseEntity.ok(typeDTO);
   }
 
-  @PostMapping("/admin/w")
 }

@@ -15,13 +15,13 @@ public interface WasteRepository extends JpaRepository<WasteEntity, Integer> {
   List<WasteEntity> findAllByValidTrue();
 
   // 유저가 속한 병원의 모든 폐기물을 리턴
-  @Query("Select w From WasteEntity w Where w.hospital.hospitalId = " +
-      "(Select u.hospital.hospitalId From UserEntity u where u.uuid = :uuid)")
+  @Query("Select w From WasteEntity w Where w.hospital.id = " +
+      "(Select u.hospital.id From UserEntity u where u.uuid = :uuid)")
   List<WasteEntity> findAllByUuid(@Param("uuid") String uuid);
 
   // 유저가 속한 병원의 활성화된 모든 폐기물을 리턴
-  @Query("Select w From WasteEntity w Where w.valid = true and w.hospital.hospitalId = " +
-      "(Select u.hospital.hospitalId From UserEntity u where u.uuid = :uuid)")
+  @Query("Select w From WasteEntity w Where w.valid = true and w.hospital.id = " +
+      "(Select u.hospital.id From UserEntity u where u.uuid = :uuid)")
   List<WasteEntity> findAllByValidTrue(@Param("uuid") String uuid);
 
 

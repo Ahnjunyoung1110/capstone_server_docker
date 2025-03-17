@@ -1,4 +1,4 @@
-package com.capstone.capstone_server.controller;
+package com.capstone.capstone_server.controller.Admin;
 
 import com.capstone.capstone_server.dto.PermissionDTO;
 import com.capstone.capstone_server.entity.PermissionEntity;
@@ -8,6 +8,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Slf4j
 @RequestMapping("admin/permission")
-
+@PreAuthorize("hasRole('ADMIN')")
 // 유저의 권한을 관리하는 컨트롤러
 public class PermissionnController {
 

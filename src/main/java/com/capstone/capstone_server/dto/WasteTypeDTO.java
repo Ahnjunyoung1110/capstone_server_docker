@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 
 public class WasteTypeDTO {
 
-  private Integer typeId;
+  private Integer id;
   private String typeName;
   private Integer period;
   private boolean active;

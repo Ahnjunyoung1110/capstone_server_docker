@@ -1,4 +1,4 @@
-package com.capstone.capstone_server.controller;
+package com.capstone.capstone_server.controller.User;
 
 
 import com.capstone.capstone_server.dto.UserDTO;

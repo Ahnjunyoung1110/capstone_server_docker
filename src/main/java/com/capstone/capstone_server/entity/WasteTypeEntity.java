@@ -26,7 +26,7 @@ public class WasteTypeEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer typeId;
+  private Integer id;
 
 
   // 명칭

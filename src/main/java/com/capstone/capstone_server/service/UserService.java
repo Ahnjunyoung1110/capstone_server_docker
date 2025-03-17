@@ -1,7 +1,6 @@
 package com.capstone.capstone_server.service;
 
 
-import com.capstone.capstone_server.entity.HospitalEntity;
 import com.capstone.capstone_server.entity.UserEntity;
 import com.capstone.capstone_server.repository.UserRepository;
 import java.util.Optional;
@@ -30,6 +29,9 @@ public class UserService {
   public UserEntity createUser(UserEntity userEntity) {
     if (userEntity == null) { // 유저 엔티티를 받지 못한 경우
       throw new IllegalArgumentException("userEntity is null");
+    }
+    if (userEntity.getHospital() == null) {
+      throw new IllegalArgumentException("hospital is null");
     }
     if (userRepository.existsById(userEntity.getUsername())) { // 동일한 ID가 DB내에 존재하는 경우
       log.warn("User with id {} already exists", userEntity.getUsername());

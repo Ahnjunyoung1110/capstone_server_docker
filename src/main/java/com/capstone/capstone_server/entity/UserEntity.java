@@ -2,18 +2,21 @@ package com.capstone.capstone_server.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.persistence.UniqueConstraint;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,15 +27,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
 public class UserEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String uuid; // UUID를 기본키로 사용
 
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String username; // 사용자 계정 ID(고유값)
 
   @Column(nullable = false)
@@ -47,11 +48,11 @@ public class UserEntity {
   private String profession; // 사용자 직업(의사, 간호사 등)
 
   @ManyToOne
-  @JoinColumn(name = "hospitalId", nullable = false)
+  @JoinColumn(name = "hospital_id")
   private HospitalEntity hospital;
 
   @ManyToOne
-  @JoinColumn(name = "permissionId", nullable = false)
+  @JoinColumn(name = "permissionId")
   private PermissionEntity permission;
 
   @Temporal(TemporalType.TIMESTAMP)
@@ -60,7 +61,13 @@ public class UserEntity {
   @Temporal(TemporalType.TIMESTAMP)
   private Date updatedAt; // 마지막 업데이트 일
 
-  @
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(
+      name = "user_roles",
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "role_id")
+  )
+  private Set<RoleEntity> roles = new HashSet<>();
 
   @Builder.Default
   private Boolean valid = false;

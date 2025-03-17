@@ -8,6 +8,11 @@ services:
       - ./src:/app/src
     depends_on:
       - db
+      - redis
+  redis:
+    image: redis:6.2
+    ports:
+      - "6379:6379"
   db:
     image: mariadb:10.11
     volumes:

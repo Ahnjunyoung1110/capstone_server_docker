@@ -33,9 +33,11 @@ public class HospitalService {
     HospitalEntity findEntity = hospitalRepository.findByHospitalNameOrHospitalCall(
         hospital.getHospitalName(), hospital.getHospitalCall()).orElse(null);
     if (findEntity != null) {
-      log.info("Hospital already exists with name " + hospital.getHospitalName());
+      log.info("Hospital already exists with name {}", hospital.getHospitalName());
       throw new IllegalArgumentException("Hospital already exists");
     }
+
+    log.info("Creating hospital {}", hospital.getHospitalName());
 
     // 신규 저장
     HospitalEntity responseEntity = hospitalRepository.save(hospital);
@@ -51,12 +53,14 @@ public class HospitalService {
     }
 
     // 기존 존재하는 병원인지 확인
-    HospitalEntity findEntity = hospitalRepository.findById(hospital.getHospitalId())
+    HospitalEntity findEntity = hospitalRepository.findById(hospital.getId())
         .orElse(null);
     if (findEntity == null) {
       throw new IllegalArgumentException("Such hospital not found");
     }
 
+    // 기존 생성 시간 유지
+    hospital.setCreatedAt(findEntity.getCreatedAt());
     // 최종 업데이트
     HospitalEntity responseEntity = hospitalRepository.save(hospital);
 
@@ -72,7 +76,7 @@ public class HospitalService {
     }
 
     // 기존 존재하는 병원인지 확인
-    HospitalEntity findEntity = hospitalRepository.findById(hospital.getHospitalId())
+    HospitalEntity findEntity = hospitalRepository.findById(hospital.getId())
         .orElse(null);
     if (findEntity == null) {
       throw new IllegalArgumentException("Such hospital not found");

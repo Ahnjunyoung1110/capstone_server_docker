@@ -1,15 +1,14 @@
-package com.capstone.capstone_server.controller;
+package com.capstone.capstone_server.controller.Admin;
 
 
 import com.capstone.capstone_server.dto.HospitalDTO;
 import com.capstone.capstone_server.entity.HospitalEntity;
 import com.capstone.capstone_server.mapper.HospitalMapper;
 import com.capstone.capstone_server.service.HospitalService;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,28 +18,15 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping("admin/hospital")
-public class HospitalController {
+@PreAuthorize("hasRole('ADMIN')")
+public class HospitalAdminController {
 
   final HospitalService hospitalService;
   final HospitalMapper hospitalMapper;
 
-  public HospitalController(HospitalService hospitalService, HospitalMapper hospitalMapper) {
+  public HospitalAdminController(HospitalService hospitalService, HospitalMapper hospitalMapper) {
     this.hospitalService = hospitalService;
     this.hospitalMapper = hospitalMapper;
-  }
-
-  /*
-  모든 병원을 리턴하는 함수
-   */
-  @GetMapping("/getallHs")
-  public ResponseEntity<?> getHospitalService() {
-    log.info("getAllHospitalService request");
-    List<HospitalEntity> allHospitals = hospitalService.getAllHospitals();
-
-    List<HospitalDTO> allHospitalsDTO = hospitalMapper.toDtoList(allHospitals);
-
-    // 반환
-    return ResponseEntity.ok().body(allHospitalsDTO);
   }
 
 
@@ -65,7 +51,7 @@ public class HospitalController {
    */
   @PutMapping("/updateHs")
   public ResponseEntity<?> updateHospital(@RequestBody HospitalDTO hospitalDTO) {
-    log.info("updateHospital request: {}", hospitalDTO.getHospitalId());
+    log.info("updateHospital request: {}", hospitalDTO.getId());
 
     HospitalEntity hospitalEntity = hospitalMapper.toEntity(hospitalDTO);
 
@@ -81,7 +67,7 @@ public class HospitalController {
    */
   @DeleteMapping("/deleteHs")
   public ResponseEntity<?> deleteHospital(@RequestBody HospitalDTO hospitalDTO) {
-    log.info("deleteHospital request: {}", hospitalDTO.getHospitalId());
+    log.info("deleteHospital request: {}", hospitalDTO.getId());
 
     HospitalEntity hospitalEntity = hospitalMapper.toEntity(hospitalDTO);
 

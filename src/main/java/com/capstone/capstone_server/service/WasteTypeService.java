@@ -5,7 +5,6 @@ import com.capstone.capstone_server.entity.WasteTypeEntity;
 import com.capstone.capstone_server.repository.WasteTypeRepository;
 import java.util.List;
 import java.util.Optional;
-import javax.swing.text.html.Option;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,8 +56,8 @@ public class WasteTypeService {
     }
 
     // 삭제할 기존의 폐기물 종류를 가져옴
-    Optional<WasteTypeEntity> wasteTypeEntity = wasteTypeRepository.findById(wasteType.getTypeId());
-    if (wasteTypeEntity.isEmpty()){
+    Optional<WasteTypeEntity> wasteTypeEntity = wasteTypeRepository.findById(wasteType.getId());
+    if (wasteTypeEntity.isEmpty()) {
       throw new IllegalArgumentException("WasteType not found");
     }
 
