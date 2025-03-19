@@ -24,7 +24,7 @@ public class HospitalEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer hospitalId;
+  private Integer id;
 
   @NotNull
   private String hospitalName;

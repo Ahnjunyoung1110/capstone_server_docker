@@ -1,6 +1,5 @@
 package com.capstone.capstone_server.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,9 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class PermissionDTO {
+public class WasteDTO {
 
   private Integer id;
-  private String permissionName;
-  private double permissionLevel;
+  private String wasteName;
+  private boolean wasteStatus;
 }

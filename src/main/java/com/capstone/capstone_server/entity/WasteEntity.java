@@ -1,10 +1,11 @@
 package com.capstone.capstone_server.entity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Temporal;
@@ -15,31 +16,45 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @Entity
 @Builder
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
-public class PermissionEntity {
+@AllArgsConstructor
+
+public class WasteEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
-  private String permissionName;
+  @ManyToOne
+  @JoinColumn(name = "hospital_id", nullable = false)
+  private HospitalEntity hospital;
 
-  @Column(nullable = false)
-  private double permissionLevel;
+  // 창고 주키, 업데이트 예정
+  private String storage;
 
-  @Temporal(TemporalType.TIMESTAMP)
-  private Date createdAt;
+  // 폐기물 발생 장소, 업데이트 예정
+  private String wasteCreatedPosition;
 
-  @Temporal(TemporalType.TIMESTAMP)
-  private Date updatedAt;
+  // 비콘 ID 업데이트 예정
+  private Integer biconId;
+
+  // 폐기물 종류, 업데이트 예정
+  private String wasteName;
+
+  // 폐기물 상태, 업데이트 예정
+  private String wasteState;
 
   @Builder.Default
-  private boolean valid = true;
+  private Boolean valid = true;
 
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date createdAt; // 계정 생성일
+
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date updatedAt; // 마지막 업데이트 일
 
   // 최초 생성시 실행
   // createdAt 과 updatedAt을 현재시간으로 설정한다.

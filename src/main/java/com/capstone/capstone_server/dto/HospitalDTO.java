@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class HospitalDTO {
 
-  private Integer hospitalId;
+  private Integer id;
   private String hospitalName;
   private String hospitalCall;
 

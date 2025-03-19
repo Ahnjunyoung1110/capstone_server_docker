@@ -7,12 +7,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Data
-public class PermissionDTO {
+@AllArgsConstructor
+@NoArgsConstructor
+
+public class WasteTypeDTO {
 
   private Integer id;
-  private String permissionName;
-  private double permissionLevel;
+  private String typeName;
+  private Integer period;
+  private boolean active;
+
 }

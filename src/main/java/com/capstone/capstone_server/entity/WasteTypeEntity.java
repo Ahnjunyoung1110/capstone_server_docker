@@ -1,5 +1,6 @@
 package com.capstone.capstone_server.entity;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,31 +16,38 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @Entity
 @Builder
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
-public class PermissionEntity {
+@AllArgsConstructor
+
+public class WasteTypeEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
-  private String permissionName;
 
+  // 명칭
   @Column(nullable = false)
-  private double permissionLevel;
+  private String typeName;
 
-  @Temporal(TemporalType.TIMESTAMP)
-  private Date createdAt;
 
-  @Temporal(TemporalType.TIMESTAMP)
-  private Date updatedAt;
+  // 보관기일
+  @Column(nullable = false)
+  private Integer period;
+
+
 
   @Builder.Default
-  private boolean valid = true;
+  private Boolean valid = true;
 
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date createdAt; // 계정 생성일
+
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date updatedAt; // 마지막 업데이트 일
 
   // 최초 생성시 실행
   // createdAt 과 updatedAt을 현재시간으로 설정한다.
