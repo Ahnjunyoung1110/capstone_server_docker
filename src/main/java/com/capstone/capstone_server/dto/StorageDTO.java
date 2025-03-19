@@ -1,0 +1,23 @@
+package com.capstone.capstone_server.dto;
+
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+
+public class StorageDTO {
+
+  private Integer id;
+
+  private String storageName;
+
+  private Integer hospitalId;
+
+  // 비콘 추가 예정
+}

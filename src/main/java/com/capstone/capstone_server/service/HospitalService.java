@@ -3,6 +3,7 @@ package com.capstone.capstone_server.service;
 import com.capstone.capstone_server.entity.HospitalEntity;
 import com.capstone.capstone_server.repository.HospitalRepository;
 import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,13 @@ public class HospitalService {
     return hospitalRepository.findByValidTrue();
   }
 
+  // 특정 병원 Entity 리턴
+  public HospitalEntity getHospitalById(int id) {
+    Optional<HospitalEntity> hospital = hospitalRepository.findById(id);
+    return hospital.orElse(null);
+
+  }
+
   // 신규 병원 생성
   public HospitalEntity createHospital(HospitalEntity hospital) {
     if (hospital == null) {
@@ -39,11 +47,9 @@ public class HospitalService {
 
     log.info("Creating hospital {}", hospital.getHospitalName());
 
-    // 신규 저장
-    HospitalEntity responseEntity = hospitalRepository.save(hospital);
 
-    // 변환 후 반환
-    return responseEntity;
+    // 반환
+    return hospitalRepository.save(hospital);
   }
 
   // 기존 병원 업데이트
@@ -61,11 +67,9 @@ public class HospitalService {
 
     // 기존 생성 시간 유지
     hospital.setCreatedAt(findEntity.getCreatedAt());
-    // 최종 업데이트
-    HospitalEntity responseEntity = hospitalRepository.save(hospital);
 
     // 반환
-    return responseEntity;
+    return hospitalRepository.save(hospital);
 
   }
 
@@ -83,8 +87,7 @@ public class HospitalService {
     }
 
     findEntity.setValid(false);
-    HospitalEntity responseEntity = hospitalRepository.save(hospital);
 
-    return responseEntity;
+    return hospitalRepository.save(hospital);
   }
 }
