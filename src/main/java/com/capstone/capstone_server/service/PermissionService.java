@@ -78,6 +78,7 @@ public class PermissionService {
 
     // 비활성화
     permissionEntity.setValid(false);
+    permissionEntity.setPermissionLevel(1000);
 
     // 활성화된 모든 권한을 리턴
     return getPermissions();
