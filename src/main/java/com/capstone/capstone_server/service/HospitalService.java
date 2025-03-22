@@ -25,7 +25,7 @@ public class HospitalService {
   }
 
   // 특정 병원 Entity 리턴
-  public HospitalEntity getHospitalById(int id) {
+  public HospitalEntity getHospitalById(Integer id) {
     Optional<HospitalEntity> hospital = hospitalRepository.findById(id);
     return hospital.orElse(null);
 
@@ -46,7 +46,6 @@ public class HospitalService {
     }
 
     log.info("Creating hospital {}", hospital.getHospitalName());
-
 
     // 반환
     return hospitalRepository.save(hospital);
