@@ -68,31 +68,22 @@ public class wasteController {
 
   // 새로운 폐기물을 생성하는 함수
   @PostMapping("/createWaste")
-  public ResponseEntity<?> createWaste(@AuthenticationPrincipal CustomUserDetails details,
-      @RequestBody WasteDTO wasteDTO) {
-    log.info("createWaste request");
-    WasteEntity createEntity = wasteMapper.toWasteEntity(wasteDTO);
+  public ResponseEntity<?> createWaste(@RequestBody WasteDTO wasteDTO) {
+    log.info("createWaste request {}", wasteDTO);
+    WasteDTO responseDTO = wasteService.createWaste(wasteDTO);
 
-    String uuid = details.getUsername();
-    WasteEntity wasteEntity = wasteService.createWaste(createEntity, uuid);
-
-    WasteDTO wastedto = wasteMapper.toWasteDTO(wasteEntity);
-
-    return ResponseEntity.ok().body(wastedto);
+    return ResponseEntity.ok().body(responseDTO);
   }
 
   // 폐기물을 업데이트하는 함수
   @PutMapping("updateWaste/{id}")
   public ResponseEntity<?> updateWaste(@PathVariable Integer id,
       @RequestBody WasteDTO wasteDTO) {
-    log.info("updateWaste request");
-    WasteEntity updateEntity = wasteMapper.toWasteEntity(wasteDTO);
+    log.info("updateWaste request {} , {}", wasteDTO, id);
 
-    WasteEntity wasteEntity = wasteService.updateWaste(updateEntity, id);
+    WasteDTO responseDTO = wasteService.updateWaste(wasteDTO, id);
 
-    WasteDTO wastedto = wasteMapper.toWasteDTO(wasteEntity);
-
-    return ResponseEntity.ok().body(wastedto);
+    return ResponseEntity.ok().body(responseDTO);
   }
 
   // 폐기물을 삭제(비활성화)하는 함수
@@ -100,10 +91,9 @@ public class wasteController {
   public ResponseEntity<?> deleteWaste(@PathVariable Integer wasteId) {
     log.info("deleteWaste request, wasteId: {}", wasteId);
 
-    WasteEntity wasteEntity = wasteService.deleteWaste(wasteId);
-    WasteDTO wastedto = wasteMapper.toWasteDTO(wasteEntity);
+    wasteService.deleteWaste(wasteId);
 
-    return ResponseEntity.ok().body(wastedto);
+    return ResponseEntity.ok().build();
   }
 
 

@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class BeaconService {
 
-  private HospitalService hospitalService;
-  private BeaconMapper beaconMapper;
-  private BeaconReposiroty beaconReposiroty;
+  private final HospitalService hospitalService;
+  private final BeaconMapper beaconMapper;
+  private final BeaconReposiroty beaconReposiroty;
 
   @Autowired
   public BeaconService(BeaconReposiroty beaconReposiroty, BeaconMapper beaconMapper,
@@ -42,6 +42,17 @@ public class BeaconService {
     }
 
     return beaconMapper.toBeaconDTO(entity);
+  }
+
+  // 위 함수와 동일하나 Entity로 리턴
+  public BeaconEntity getBeaconEntityById(int id) {
+    BeaconEntity entity = beaconReposiroty.findById(id).orElse(null);
+    if (entity == null || entity.isUsed()) {
+      log.info("Beacon cannot find or use");
+      throw new IllegalArgumentException("Beacon not found");
+    }
+
+    return entity;
   }
 
   // 신규 비컨 추가 메서드

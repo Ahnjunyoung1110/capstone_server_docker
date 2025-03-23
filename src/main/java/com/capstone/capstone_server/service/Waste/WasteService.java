@@ -1,12 +1,18 @@
 package com.capstone.capstone_server.service.Waste;
 
 import com.capstone.capstone_server.dto.WasteDTO;
+import com.capstone.capstone_server.entity.BeaconEntity;
 import com.capstone.capstone_server.entity.HospitalEntity;
+import com.capstone.capstone_server.entity.StorageEntity;
 import com.capstone.capstone_server.entity.WasteEntity;
+import com.capstone.capstone_server.entity.WasteStatusEntity;
+import com.capstone.capstone_server.entity.WasteTypeEntity;
+import com.capstone.capstone_server.mapper.WasteMapper;
 import com.capstone.capstone_server.repository.WasteRepository;
+import com.capstone.capstone_server.service.BeaconService;
 import com.capstone.capstone_server.service.HospitalService;
+import com.capstone.capstone_server.service.StorageService;
 import java.util.List;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,13 +23,25 @@ public class WasteService {
 
   private final WasteRepository wasteRepository;
   private final HospitalService hospitalService;
-
+  private final WasteStatusService wasteStatusService;
+  private final WasteTypeService wasteTypeService;
+  private final BeaconService beaconService;
+  private final StorageService storageService;
+  private final WasteMapper wasteMapper;
 
   @Autowired
-  public WasteService(WasteRepository wasteRepository, HospitalService hospitalService) {
+  public WasteService(WasteRepository wasteRepository, HospitalService hospitalService,
+      WasteStatusService wasteStatusService, WasteTypeService wasteTypeService,
+      BeaconService beaconService, StorageService storageService, WasteMapper wasteMapper) {
     this.wasteRepository = wasteRepository;
     this.hospitalService = hospitalService;
+    this.wasteStatusService = wasteStatusService;
+    this.wasteTypeService = wasteTypeService;
+    this.beaconService = beaconService;
+    this.storageService = storageService;
+    this.wasteMapper = wasteMapper;
   }
+
 
   // 병원에 관계 없이 DB에 등록된 모든 폐기물을 리턴
   public List<WasteEntity> getAllWastes() {
@@ -63,62 +81,100 @@ public class WasteService {
   // 상세 검색 기능 구현 예정
   //public List<WasteEntity> getSelectedWastes(String uuid) {}
 
-//  // 폐기물 생성
-//  public WasteEntity createWaste(WasteEntity waste) {
-//    if (waste == null) {
-//      throw new IllegalArgumentException("waste cannot be null");
-//    }
-//    // uuid로 hospitalEntity 조회
-//    HospitalEntity hospitalEntity = hospitalService.getHospitalById();
-//    if (hospitalEntity == null) {
-//      throw new IllegalArgumentException("Hospital entity not found");
-//    }
-//
-//    waste.setHospital(hospitalEntity);
-//    log.info("Create waste {}", waste);
-//    return wasteRepository.save(waste);
-//  }
+  // 폐기물 생성
+  public WasteDTO createWaste(WasteDTO wasteDTO) {
+    WasteEntity wasteEntity = dtoToEntity(wasteDTO);
+    log.info("create waste : {}", wasteEntity);
+    WasteEntity responseEntity = wasteRepository.save(wasteEntity);
 
-  // 폐기물 업데이트
-  public WasteEntity updateWaste(WasteEntity waste, Integer id) {
-    if (waste == null) {
-      throw new IllegalArgumentException("waste cannot be null");
-    }
-    //
-
-    HospitalEntity hospitalEntity = hospitalService.getHospitalById(id);
-    if (hospitalEntity == null) {
-      throw new IllegalArgumentException("Hospital entity not found");
-    }
-
-    waste.setHospital(hospitalEntity);
-
-    log.info("Change waste to {}", waste);
-    return wasteRepository.save(waste);
+    return wasteMapper.toWasteDTO(responseEntity);
   }
 
-  // 폐기물 삭제
-  public WasteEntity deleteWaste(Integer wasteId) {
-    if (wasteId == null) {
-      throw new IllegalArgumentException("waste cannot be null");
-    }
-    log.info("Delete waste {}", wasteId);
+  // 폐기물 수정
+  public WasteDTO updateWaste(WasteDTO wasteDTO, Integer id) {
+    WasteEntity wasteEntity = dtoToEntity(wasteDTO);
+    log.info("update waste : {}", wasteEntity);
 
-    Optional<WasteEntity> waste = wasteRepository.findById(wasteId);
-
-    if (waste.isEmpty()) {
-      throw new IllegalArgumentException("waste not found");
+    WasteEntity updateEntity = wasteRepository.findById(id).orElse(null);
+    if (updateEntity == null) {
+      log.error("Cannot update waste : {}", wasteEntity);
+      throw new IllegalArgumentException("Cannot update waste");
     }
 
-    WasteEntity wasteEntity = waste.get();
+    updateEntity.setHospital(wasteEntity.getHospital());
+    updateEntity.setWasteType(wasteEntity.getWasteType());
+    updateEntity.setWasteStatus(wasteEntity.getWasteStatus());
+    updateEntity.setBeacon(wasteEntity.getBeacon());
+    updateEntity.setStorage(wasteEntity.getStorage());
+    wasteRepository.save(updateEntity);
+    return wasteMapper.toWasteDTO(updateEntity);
+  }
+
+// 폐기물 삭제
+public void deleteWaste(Integer id){
+    WasteEntity wasteEntity = wasteRepository.findById(id).orElse(null);
+    if (wasteEntity == null) {
+      log.error("Cannot delete waste : {}", id);
+      throw new IllegalArgumentException("Cannot delete waste");
+    }
+
+    log.info("delete waste : {}", wasteEntity);
     wasteEntity.setValid(false);
+    wasteRepository.save(wasteEntity);
+}
 
-    return wasteRepository.save(wasteEntity);
+
+// 폐기물 DTO를 Entity로 변환하는 함수
+public WasteEntity dtoToEntity(WasteDTO wasteDTO) {
+  if (wasteDTO == null) {
+    log.error("waste DTO cannot be null");
+    throw new IllegalArgumentException("waste DTO cannot be null");
   }
 
+  // 병원 검색
+  HospitalEntity hospital = hospitalService.getHospitalById(wasteDTO.getHospital());
+  if (hospital == null) {
+    log.error("hospital not found");
+    throw new IllegalArgumentException("hospital not found");
+  }
 
-//  // 폐기물 DTO를 Entity로 변환하는 함수
-//  public WasteEntity dtoToEntity(WasteDTO wasteDTO) {
-//
-//  }
+  // 저장 창고 검색
+  StorageEntity storage = storageService.getStorageById(wasteDTO.getStorage());
+  if (storage == null) {
+    log.error("storage not found");
+    throw new IllegalArgumentException("storage not found");
+  }
+
+  // 비콘 검색
+  BeaconEntity beacon = beaconService.getBeaconEntityById(wasteDTO.getBeacon());
+  if (beacon == null) {
+    log.error("beacon not found");
+    throw new IllegalArgumentException("beacon not found");
+  }
+
+  // wasteType 검색
+  WasteTypeEntity wasteType = wasteTypeService.GetWasteTypeById(wasteDTO.getWasteType());
+  if (wasteType == null) {
+    log.error("waste type not found");
+    throw new IllegalArgumentException("waste type not found");
+  }
+
+  // wasteStatus 검색
+  WasteStatusEntity wasteStatus = wasteStatusService.getWasteStatusEntity(
+      wasteDTO.getWasteStatus());
+  if (wasteStatus == null) {
+    log.error("waste status not found");
+    throw new IllegalArgumentException("waste status not found");
+  }
+
+  return WasteEntity.builder()
+      .id(wasteDTO.getId())
+      .hospital(hospital)
+      .storage(storage)
+      .beacon(beacon)
+      .wasteType(wasteType)
+      .wasteStatus(wasteStatus)
+      .build();
+
+}
 }

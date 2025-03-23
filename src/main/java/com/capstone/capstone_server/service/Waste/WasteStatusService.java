@@ -32,6 +32,11 @@ public class WasteStatusService {
     return wasteStatusMapper.EntityToDtoList(wasteStatusEntities);
   }
 
+  // 특정 엔티티를 검색 후 리턴
+  public WasteStatusEntity getWasteStatusEntity(int id) {
+    return wasteStatusRepository.findById(id).orElse(null);
+  }
+
   // 신규 생성
   public List<WasteStatusDTO> createWasteStatus(WasteStatusDTO wasteStatusDTO) {
     if (wasteStatusDTO == null) {

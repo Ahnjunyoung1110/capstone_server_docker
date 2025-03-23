@@ -47,6 +47,19 @@ public class StorageService {
     return storageMapper.toStorageDTOList(responseEntities);
   }
 
+  // 단일 창고 검색 메서드
+  public StorageEntity getStorageById(Integer id) {
+    log.info("getStorageById");
+    log.info("id: {}", id);
+    if (id == null) {
+      log.warn("id is null");
+      throw new IllegalArgumentException("id is null");
+    }
+
+    Optional<StorageEntity> responseEntity = storageRepository.findById(id);
+    return responseEntity.orElse(null);
+  }
+
   // create 서비스
   public StorageDTO createStorage(StorageDTO storageDTO) {
     log.info("createStorage");

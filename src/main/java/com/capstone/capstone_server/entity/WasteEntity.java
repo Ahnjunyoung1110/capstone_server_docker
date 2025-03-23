@@ -1,6 +1,5 @@
 package com.capstone.capstone_server.entity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Builder
@@ -26,11 +26,12 @@ import lombok.NoArgsConstructor;
 public class WasteEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
+  @GeneratedValue(strategy = GenerationType.AUTO, generator = "waste-id-generator")
+  @GenericGenerator(name = "waste-id-generator", strategy = "com.capstone.capstone_server.service.Waste.WasteIdGenerator")
+  private String id;
 
   @ManyToOne
-  @JoinColumn(name = "hospital_id", nullable = false)
+  @JoinColumn(nullable = false)
   private HospitalEntity hospital;
 
   // 창고
