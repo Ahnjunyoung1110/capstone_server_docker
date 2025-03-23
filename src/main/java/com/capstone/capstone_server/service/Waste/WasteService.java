@@ -1,9 +1,10 @@
-package com.capstone.capstone_server.service;
+package com.capstone.capstone_server.service.Waste;
 
+import com.capstone.capstone_server.dto.WasteDTO;
 import com.capstone.capstone_server.entity.HospitalEntity;
 import com.capstone.capstone_server.entity.WasteEntity;
-import com.capstone.capstone_server.repository.HospitalRepository;
 import com.capstone.capstone_server.repository.WasteRepository;
+import com.capstone.capstone_server.service.HospitalService;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -15,12 +16,13 @@ import org.springframework.stereotype.Service;
 public class WasteService {
 
   private final WasteRepository wasteRepository;
-  private final HospitalRepository hospitalRepository;
+  private final HospitalService hospitalService;
+
 
   @Autowired
-  public WasteService(WasteRepository wasteRepository, HospitalRepository hospitalRepository) {
+  public WasteService(WasteRepository wasteRepository, HospitalService hospitalService) {
     this.wasteRepository = wasteRepository;
-    this.hospitalRepository = hospitalRepository;
+    this.hospitalService = hospitalService;
   }
 
   // 병원에 관계 없이 DB에 등록된 모든 폐기물을 리턴
@@ -61,29 +63,30 @@ public class WasteService {
   // 상세 검색 기능 구현 예정
   //public List<WasteEntity> getSelectedWastes(String uuid) {}
 
-  // 폐기물 생성
-  public WasteEntity createWaste(WasteEntity waste, String uuid) {
-    if (waste == null) {
-      throw new IllegalArgumentException("waste cannot be null");
-    }
-    // uuid로 hospitalEntity 조회
-    HospitalEntity hospitalEntity = hospitalRepository.findByUuid(uuid);
-    if (hospitalEntity == null) {
-      throw new IllegalArgumentException("Hospital entity not found");
-    }
-
-    waste.setHospital(hospitalEntity);
-    log.info("Create waste {}", waste);
-    return wasteRepository.save(waste);
-  }
+//  // 폐기물 생성
+//  public WasteEntity createWaste(WasteEntity waste) {
+//    if (waste == null) {
+//      throw new IllegalArgumentException("waste cannot be null");
+//    }
+//    // uuid로 hospitalEntity 조회
+//    HospitalEntity hospitalEntity = hospitalService.getHospitalById();
+//    if (hospitalEntity == null) {
+//      throw new IllegalArgumentException("Hospital entity not found");
+//    }
+//
+//    waste.setHospital(hospitalEntity);
+//    log.info("Create waste {}", waste);
+//    return wasteRepository.save(waste);
+//  }
 
   // 폐기물 업데이트
-  public WasteEntity updateWaste(WasteEntity waste, String uuid) {
+  public WasteEntity updateWaste(WasteEntity waste, Integer id) {
     if (waste == null) {
       throw new IllegalArgumentException("waste cannot be null");
     }
-    // uuid로 hospitalEntity 조회
-    HospitalEntity hospitalEntity = hospitalRepository.findByUuid(uuid);
+    //
+
+    HospitalEntity hospitalEntity = hospitalService.getHospitalById(id);
     if (hospitalEntity == null) {
       throw new IllegalArgumentException("Hospital entity not found");
     }
@@ -112,4 +115,10 @@ public class WasteService {
 
     return wasteRepository.save(wasteEntity);
   }
+
+
+//  // 폐기물 DTO를 Entity로 변환하는 함수
+//  public WasteEntity dtoToEntity(WasteDTO wasteDTO) {
+//
+//  }
 }

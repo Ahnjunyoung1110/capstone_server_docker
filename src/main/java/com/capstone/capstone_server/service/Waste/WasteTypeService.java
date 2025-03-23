@@ -1,4 +1,4 @@
-package com.capstone.capstone_server.service;
+package com.capstone.capstone_server.service.Waste;
 
 
 import com.capstone.capstone_server.entity.WasteTypeEntity;

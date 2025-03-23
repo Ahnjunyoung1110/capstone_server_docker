@@ -4,7 +4,7 @@ import com.capstone.capstone_server.detail.CustomUserDetails;
 import com.capstone.capstone_server.dto.WasteDTO;
 import com.capstone.capstone_server.entity.WasteEntity;
 import com.capstone.capstone_server.mapper.WasteMapper;
-import com.capstone.capstone_server.service.WasteService;
+import com.capstone.capstone_server.service.Waste.WasteService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,14 +82,13 @@ public class wasteController {
   }
 
   // 폐기물을 업데이트하는 함수
-  @PutMapping("updateWaste")
-  public ResponseEntity<?> updateWaste(@AuthenticationPrincipal CustomUserDetails details,
+  @PutMapping("updateWaste/{id}")
+  public ResponseEntity<?> updateWaste(@PathVariable Integer id,
       @RequestBody WasteDTO wasteDTO) {
     log.info("updateWaste request");
     WasteEntity updateEntity = wasteMapper.toWasteEntity(wasteDTO);
 
-    String uuid = details.getUsername();
-    WasteEntity wasteEntity = wasteService.updateWaste(updateEntity, uuid);
+    WasteEntity wasteEntity = wasteService.updateWaste(updateEntity, id);
 
     WasteDTO wastedto = wasteMapper.toWasteDTO(wasteEntity);
 

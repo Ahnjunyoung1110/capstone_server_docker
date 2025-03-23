@@ -1,5 +1,6 @@
 package com.capstone.capstone_server.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,20 +33,27 @@ public class WasteEntity {
   @JoinColumn(name = "hospital_id", nullable = false)
   private HospitalEntity hospital;
 
-  // 창고 주키, 업데이트 예정
-  private String storage;
+  // 창고
+  @ManyToOne
+  @JoinColumn(nullable = false)
+  private StorageEntity storage;
 
   // 폐기물 발생 장소, 업데이트 예정
   private String wasteCreatedPosition;
 
-  // 비콘 ID 업데이트 예정
-  private Integer biconId;
+  // 비콘 ID
+  @ManyToOne
+  @JoinColumn(nullable = false)
+  private BeaconEntity beacon;
 
-  // 폐기물 종류, 업데이트 예정
-  private String wasteName;
+  // 폐기물 종류
+  @ManyToOne
+  @JoinColumn(nullable = false)
+  private WasteTypeEntity wasteType;
 
-  // 폐기물 상태, 업데이트 예정
-  private String wasteState;
+  // 폐기물 상태
+  @ManyToOne
+  private WasteStatusEntity wasteStatus;
 
   @Builder.Default
   private Boolean valid = true;

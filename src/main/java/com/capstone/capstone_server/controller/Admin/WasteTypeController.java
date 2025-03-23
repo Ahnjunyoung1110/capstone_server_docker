@@ -4,7 +4,7 @@ package com.capstone.capstone_server.controller.Admin;
 import com.capstone.capstone_server.dto.WasteTypeDTO;
 import com.capstone.capstone_server.entity.WasteTypeEntity;
 import com.capstone.capstone_server.mapper.WasteTypeMapper;
-import com.capstone.capstone_server.service.WasteTypeService;
+import com.capstone.capstone_server.service.Waste.WasteTypeService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
