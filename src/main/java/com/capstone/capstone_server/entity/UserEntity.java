@@ -48,11 +48,11 @@ public class UserEntity {
   private String profession; // 사용자 직업(의사, 간호사 등)
 
   @ManyToOne
-  @JoinColumn(name = "hospital_id")
+  @JoinColumn
   private HospitalEntity hospital;
 
   @ManyToOne
-  @JoinColumn(name = "permissionId")
+  @JoinColumn
   private PermissionEntity permission;
 
   @Temporal(TemporalType.TIMESTAMP)
@@ -63,9 +63,8 @@ public class UserEntity {
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
-      name = "user_roles",
-      joinColumns = @JoinColumn(name = "user_id"),
-      inverseJoinColumns = @JoinColumn(name = "role_id")
+      joinColumns = @JoinColumn,
+      inverseJoinColumns = @JoinColumn
   )
   private Set<RoleEntity> roles = new HashSet<>();
 

@@ -15,55 +15,34 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
-public class WasteEntity {
+public class StorageEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO, generator = "waste-id-generator")
-  @GenericGenerator(name = "waste-id-generator", strategy = "com.capstone.capstone_server.service.Waste.WasteIdGenerator")
-  private String id;
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
   @ManyToOne
   @JoinColumn(nullable = false)
   private HospitalEntity hospital;
 
-  // 창고
-  @ManyToOne
-  @JoinColumn(nullable = false)
-  private StorageEntity storage;
+  private String storageName;
 
-  // 폐기물 발생 장소, 업데이트 예정
-  private String wasteCreatedPosition;
-
-  // 비콘 ID
-  @ManyToOne
-  @JoinColumn(nullable = false)
-  private BeaconEntity beacon;
-
-  // 폐기물 종류
-  @ManyToOne
-  @JoinColumn(nullable = false)
-  private WasteTypeEntity wasteType;
-
-  // 폐기물 상태
-  @ManyToOne
-  private WasteStatusEntity wasteStatus;
-
-  @Builder.Default
-  private Boolean valid = true;
+  // 비콘
 
   @Temporal(TemporalType.TIMESTAMP)
   private Date createdAt; // 계정 생성일
 
   @Temporal(TemporalType.TIMESTAMP)
   private Date updatedAt; // 마지막 업데이트 일
+
+  @Builder.Default
+  private boolean valid = true;
 
   // 최초 생성시 실행
   // createdAt 과 updatedAt을 현재시간으로 설정한다.
@@ -79,4 +58,6 @@ public class WasteEntity {
   protected void onUpdate() {
     this.updatedAt = new Date();
   }
+
+
 }

@@ -1,4 +1,4 @@
-package com.capstone.capstone_server.service;
+package com.capstone.capstone_server.service.Waste;
 
 
 import com.capstone.capstone_server.entity.WasteTypeEntity;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class WasteTypeService {
 
-  private WasteTypeRepository wasteTypeRepository;
+  private final WasteTypeRepository wasteTypeRepository;
 
   @Autowired
   public WasteTypeService(WasteTypeRepository wasteTypeRepository) {
@@ -23,6 +23,11 @@ public class WasteTypeService {
   // 모든 폐기물 종류를 리턴하는 함수
   public List<WasteTypeEntity> GetAllWasteTypes() {
     return wasteTypeRepository.findAll();
+  }
+
+  // 특정 Entity를 리턴하는 함수
+  public WasteTypeEntity GetWasteTypeById(int id) {
+    return wasteTypeRepository.findById(id).orElse(null);
   }
 
   // 새로운 폐기물을 생성
