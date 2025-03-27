@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -65,13 +66,11 @@ public class HospitalAdminController {
   /*
   병원을 삭제하는 컨트롤러
    */
-  @DeleteMapping("/deleteHs")
-  public ResponseEntity<?> deleteHospital(@RequestBody HospitalDTO hospitalDTO) {
-    log.info("deleteHospital request: {}", hospitalDTO.getId());
+  @DeleteMapping("/deleteHs/{id}")
+  public ResponseEntity<?> deleteHospital(@PathVariable Integer id) {
+    log.info("deleteHospital request: {}", id);
 
-    HospitalEntity hospitalEntity = hospitalMapper.toEntity(hospitalDTO);
-
-    HospitalEntity deletedEntity = hospitalService.deleteHospital(hospitalEntity);
+    HospitalEntity deletedEntity = hospitalService.deleteHospital(id);
 
     HospitalDTO deletedHospitalDTO = hospitalMapper.toDto(deletedEntity);
 
