@@ -31,20 +31,9 @@ public class UserController {
   @PostMapping("/signup")
   public ResponseEntity<?> signUp(@RequestBody UserDTO userDTO) {
     log.info("Sign up user request: {}", userDTO);
-    // DTO를 엔티티로 변경
-    UserEntity userEntity = UserEntity.builder()
-        .username(userDTO.getUsername())
-        .password(userDTO.getPassword())
-        .email(userDTO.getEmail())
-        .name(userDTO.getName())
-        .profession(userDTO.getProfession())
-        .phoneNumber(userDTO.getPhoneNumber())
-        .build();
 
     // 유저 생성 후 반환
-    UserEntity responseEntity = userService.createUser(userEntity);
-    UserDTO responseDTO = UserDTO.builder().username(responseEntity.getUsername())
-        .password(responseEntity.getPassword()).build();
+    UserDTO responseDTO = userService.createUser(userDTO);
     return ResponseEntity.ok().body(responseDTO);
   }
 
@@ -64,4 +53,6 @@ public class UserController {
     UserDTO responseDTO = UserDTO.builder().token(token).build();
     return ResponseEntity.ok().body(responseDTO);
   }
+
+
 }

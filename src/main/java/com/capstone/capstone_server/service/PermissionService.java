@@ -4,6 +4,7 @@ import com.capstone.capstone_server.entity.PermissionEntity;
 import com.capstone.capstone_server.entity.UserEntity;
 import com.capstone.capstone_server.repository.PermissionRepository;
 import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,20 @@ public class PermissionService {
   // 모든 권한 리턴
   public List<PermissionEntity> getPermissions() {
     return permissionRepository.findAllByValidTrueOrderByPermissionLevelAsc();
+  }
+
+  // id를 통해 permission을 리턴
+  public PermissionEntity getPermission(Integer id) {
+    if(id == null){
+      log.error("Permission id is null");
+      throw new IllegalArgumentException("Permission id is null");
+    }
+    Optional<PermissionEntity> response = permissionRepository.findById(id);
+    if(response.isEmpty()){
+      log.error("Permission not found");
+      throw new IllegalArgumentException("Permission not found");
+    }
+    return response.get();
   }
 
 

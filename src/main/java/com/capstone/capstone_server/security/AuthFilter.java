@@ -36,6 +36,7 @@ public class AuthFilter extends OncePerRequestFilter {
 
     // 헤더에 Bearer 토큰이 존재하는 경우
     if (token != null && token.startsWith("Bearer ")) {
+      logger.info("Bearer token found");
       token = token.substring(7);
       CustomUserDetails userDetails = tokenProvider.validateToken(token);
 

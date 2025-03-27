@@ -30,8 +30,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
    */
   @ExceptionHandler(ServletException.class)
   public ResponseEntity<Object> handleServletException(ServletException ex, WebRequest request) {
-    String customMsg = "토큰이 틀렸어용!";
-    // ex.getMessage()
+//    String customMsg = "토큰이 틀렸어용!";
+    String customMsg = ex.getMessage();
     return new ResponseEntity<>(customMsg, HttpStatus.BAD_REQUEST);
   }
 

@@ -1,5 +1,6 @@
 package com.capstone.capstone_server.service;
 
+import com.capstone.capstone_server.dto.UserDTO;
 import com.capstone.capstone_server.entity.UserEntity;
 import com.capstone.capstone_server.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,16 +33,15 @@ class UserServiceTest {
     @Test
     //생성에 성공 경우 테스트
     void createUser_success() {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setUuid("testUserId");
-        userEntity.setPassword("testPassword");
-        String originalPassword = userEntity.getPassword();
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUuid("testUserId");
+        userDTO.setPassword("testPassword");
+        String originalPassword = userDTO.getPassword();
         //Mock 설정, ID가 존재하지 않는 상태
-        when(userRepository.existsById(userEntity.getUuid())).thenReturn(false);
-        when(userRepository.save(userEntity)).thenReturn(userEntity);
+        when(userRepository.existsById(userDTO.getUuid())).thenReturn(false);
         
         // 생성 후 테스트
-        UserEntity testUser = userService.createUser(userEntity);
+        UserDTO testUser = userService.createUser(userDTO);
         assertNotNull(testUser);
         System.out.println("암호화 전 비밀번호: " + originalPassword);
         System.out.println("암호화 후 비밀번호: " + testUser.getPassword());
@@ -53,8 +53,8 @@ class UserServiceTest {
     @Test
     //UserEntity가 null이라 실패할 경우 테스트
     void createUser_fail() {
-        UserEntity userEntity = null;
-        Exception exception = assertThrows(IllegalArgumentException.class,() -> userService.createUser(userEntity));
+        UserDTO userDTO = null;
+        Exception exception = assertThrows(IllegalArgumentException.class,() -> userService.createUser(userDTO));
 
         assertEquals("userEntity is null", exception.getMessage());
     }
@@ -62,14 +62,14 @@ class UserServiceTest {
     @Test
     // 해당 ID가 이미 존재하는 경우
     void createUser_fail2() {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setUuid("testUserId");
-        userEntity.setPassword("testPassword");
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUuid("testUserId");
+        userDTO.setPassword("testPassword");
         
         // 이미 존재한다고 Mock 설정
-        when(userRepository.existsById(userEntity.getUuid())).thenReturn(true);
+        when(userRepository.existsById(userDTO.getUuid())).thenReturn(true);
 
-        Exception exception = assertThrows(IllegalArgumentException.class,() -> userService.createUser(userEntity));
+        Exception exception = assertThrows(IllegalArgumentException.class,() -> userService.createUser(userDTO));
 
         assertEquals("Same user id is already exists", exception.getMessage());
     }
