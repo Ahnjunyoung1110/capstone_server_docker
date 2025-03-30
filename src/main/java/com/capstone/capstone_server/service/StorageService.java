@@ -28,21 +28,16 @@ public class StorageService {
 
 
   // 검색 메서드
-  public List<StorageDTO> getAllStorages(Boolean valid, Integer hospitalId) {
+  public List<StorageDTO> getAllStorages(Integer hospitalId) {
     log.info("getAllStorages");
-    log.info("valid: {}, hospitalId: {}", valid, hospitalId);
+    log.info("hospitalId: {}", hospitalId);
 
-    // valid는 null일 수 없음
-    if (valid == null) {
-      log.warn("valid is null");
-      throw new IllegalArgumentException("valid is null");
-    }
     // hospital 조건을 걸지 않은경우 전체 검색
     if (hospitalId == null) {
       log.info("hospitalId is null");
     }
 
-    List<StorageEntity> responseEntities = storageRepository.serchStorage(valid, hospitalId);
+    List<StorageEntity> responseEntities = storageRepository.serchStorage(hospitalId);
     // dto로 변환
     return storageMapper.toStorageDTOList(responseEntities);
   }
@@ -73,7 +68,7 @@ public class StorageService {
 
     log.info("storageEntity: {}", storageEntity);
 
-    StorageEntity responseEntity =  storageRepository.save(storageEntity);
+    StorageEntity responseEntity = storageRepository.save(storageEntity);
     return storageMapper.toStorageDTO(responseEntity);
   }
 
@@ -120,10 +115,8 @@ public class StorageService {
       throw new IllegalArgumentException("storageEntity not found");
     }
 
-    // 기존 Valid 변경
-    StorageEntity storageEntityToUpdate = storageEntityOptional.get();
-    storageEntityToUpdate.setValid(false);
-    storageRepository.save(storageEntityToUpdate);
+    // 삭제
+    storageRepository.delete(storageEntityOptional.get());
   }
 
   // DTO를 Entity로 변환하는 메서드

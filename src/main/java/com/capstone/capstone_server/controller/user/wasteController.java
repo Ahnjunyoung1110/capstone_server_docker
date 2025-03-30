@@ -1,12 +1,12 @@
-package com.capstone.capstone_server.controller.User;
+package com.capstone.capstone_server.controller.user;
 
 import com.capstone.capstone_server.detail.CustomUserDetails;
 import com.capstone.capstone_server.dto.WasteDTO;
 import com.capstone.capstone_server.dto.WasteLogDTO;
 import com.capstone.capstone_server.entity.WasteEntity;
 import com.capstone.capstone_server.mapper.WasteMapper;
-import com.capstone.capstone_server.service.Waste.WasteLogService;
-import com.capstone.capstone_server.service.Waste.WasteService;
+import com.capstone.capstone_server.service.waste.WasteLogService;
+import com.capstone.capstone_server.service.waste.WasteService;
 import java.util.Date;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;

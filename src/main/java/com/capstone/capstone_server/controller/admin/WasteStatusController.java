@@ -1,8 +1,8 @@
-package com.capstone.capstone_server.controller.Admin;
+package com.capstone.capstone_server.controller.admin;
 
 
 import com.capstone.capstone_server.dto.WasteStatusDTO;
-import com.capstone.capstone_server.service.Waste.WasteStatusService;
+import com.capstone.capstone_server.service.waste.WasteStatusService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

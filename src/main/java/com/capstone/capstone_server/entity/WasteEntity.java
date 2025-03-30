@@ -27,7 +27,7 @@ public class WasteEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO, generator = "waste-id-generator")
-  @GenericGenerator(name = "waste-id-generator", strategy = "com.capstone.capstone_server.service.Waste.WasteIdGenerator")
+  @GenericGenerator(name = "waste-id-generator", strategy = "com.capstone.capstone_server.service.waste.WasteIdGenerator")
   private String id;
 
   @ManyToOne
@@ -60,8 +60,7 @@ public class WasteEntity {
   @ManyToOne
   private WasteStatusEntity wasteStatus;
 
-  @Builder.Default
-  private Boolean valid = true;
+  private Boolean valid;
 
   @Temporal(TemporalType.TIMESTAMP)
   private Date createdAt; // 계정 생성일
@@ -75,6 +74,7 @@ public class WasteEntity {
   protected void onCreate() {
     this.createdAt = new Date();
     this.updatedAt = new Date();
+    this.valid = true;
   }
 
   // 업데이트시 실행

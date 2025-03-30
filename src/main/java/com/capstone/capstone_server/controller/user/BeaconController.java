@@ -1,4 +1,4 @@
-package com.capstone.capstone_server.controller.User;
+package com.capstone.capstone_server.controller.user;
 
 
 import com.capstone.capstone_server.dto.BeaconDTO;
@@ -49,7 +49,8 @@ public class BeaconController {
   }
 
   @PutMapping("/updateBc/{id}")
-  public ResponseEntity<BeaconDTO> updateBeacon(@PathVariable("id") int id, @RequestBody BeaconDTO beaconDTO) {
+  public ResponseEntity<BeaconDTO> updateBeacon(@PathVariable("id") int id,
+      @RequestBody BeaconDTO beaconDTO) {
     log.info("updateBeacon Controller");
     return ResponseEntity.ok(beaconService.updateBeacon(id, beaconDTO));
   }

@@ -38,11 +38,6 @@ public class WasteTypeEntity {
   @Column(nullable = false)
   private Integer period;
 
-
-
-  @Builder.Default
-  private Boolean valid = true;
-
   @Temporal(TemporalType.TIMESTAMP)
   private Date createdAt; // 계정 생성일
 
@@ -55,7 +50,6 @@ public class WasteTypeEntity {
   protected void onCreate() {
     this.createdAt = new Date();
     this.updatedAt = new Date();
-    this.valid = true;
   }
 
   // 업데이트시 실행

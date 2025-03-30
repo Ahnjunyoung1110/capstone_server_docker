@@ -1,4 +1,4 @@
-package com.capstone.capstone_server.service.Waste;
+package com.capstone.capstone_server.service.waste;
 
 import com.capstone.capstone_server.dto.WasteDTO;
 import com.capstone.capstone_server.entity.BeaconEntity;

@@ -1,4 +1,4 @@
-package com.capstone.capstone_server.controller.User;
+package com.capstone.capstone_server.controller.user;
 
 import com.capstone.capstone_server.dto.HospitalDTO;
 import com.capstone.capstone_server.entity.HospitalEntity;

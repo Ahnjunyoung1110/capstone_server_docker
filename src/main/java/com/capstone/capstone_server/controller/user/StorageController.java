@@ -1,4 +1,4 @@
-package com.capstone.capstone_server.controller.User;
+package com.capstone.capstone_server.controller.user;
 
 
 import com.capstone.capstone_server.dto.StorageDTO;
@@ -32,13 +32,12 @@ public class StorageController {
   // 조건에 맞춰 창고를 리턴
   @GetMapping
   public ResponseEntity<List<StorageDTO>> getAllStorage(
-      @RequestParam(required = false) Boolean valid, // 필수, 현재 활성화된 창고 여부
       @RequestParam(required = false) Integer hospitalId // 소속 병원 창고 여부
   ) {
     log.info("getAllStorageController");
 
     // 모든 엔티티 획득
-    List<StorageDTO> storageDTOS = storageService.getAllStorages(valid, hospitalId);
+    List<StorageDTO> storageDTOS = storageService.getAllStorages(hospitalId);
 
     log.info("Find result {}", storageDTOS);
 

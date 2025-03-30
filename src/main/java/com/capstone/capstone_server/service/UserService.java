@@ -3,11 +3,15 @@ package com.capstone.capstone_server.service;
 
 import com.capstone.capstone_server.dto.UserDTO;
 import com.capstone.capstone_server.entity.HospitalEntity;
-import com.capstone.capstone_server.entity.PermissionEntity;
+import com.capstone.capstone_server.entity.RoleEntity;
+import com.capstone.capstone_server.entity.RoleEntity.RoleType;
 import com.capstone.capstone_server.entity.UserEntity;
 import com.capstone.capstone_server.mapper.UserMapper;
+import com.capstone.capstone_server.repository.RoleRepository;
 import com.capstone.capstone_server.repository.UserRepository;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,16 +24,17 @@ public class UserService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final HospitalService hospitalService;
-  private final PermissionService permissionService;
   private final UserMapper userMapper;
+  private final RoleRepository roleRepository;
 
   @Autowired
-  private UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, HospitalService hospitalService, UserMapper userMapper, PermissionService permissionService) {
+  private UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+      HospitalService hospitalService, UserMapper userMapper, RoleRepository roleRepository) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.hospitalService = hospitalService;
     this.userMapper = userMapper;
-    this.permissionService = permissionService;
+    this.roleRepository = roleRepository;
   }
 
   // uuid를 통해 Entity를 반환받는 메서드
@@ -84,7 +89,63 @@ public class UserService {
       throw new IllegalArgumentException("Password is wrong");
     }
 
+    if (!userEntity.getValid()) {
+      log.info("User {} is valid", username);
+      throw new IllegalArgumentException("This account has not been authorized yet.");
+    }
+
     return userEntity;
+  }
+
+  // 유저의 권한과 활성화를 설정하는 함수
+  public UserDTO updateUserRole(String userUuid, Set<RoleType> roles) {
+    if (userUuid == null) {
+      log.warn("userId is null");
+      throw new IllegalArgumentException("userEntity is null");
+    }
+
+    if (roles == null) {
+      log.warn("role is null");
+      throw new IllegalArgumentException("role is null");
+    }
+
+    // 유저가 존재하는지 확인
+    UserEntity findUser = userRepository.findById(userUuid).orElse(null);
+    if (findUser == null) {
+      log.warn("User with uuid {} not found", userUuid);
+      throw new IllegalArgumentException("Id is wrong");
+    }
+
+    // 해당 권한을 Entity로 가져옴
+    Set<RoleEntity> rolesEntity = roleRepository.findAllByNameIn(roles);
+
+    // 권한 설정
+    findUser.setRoles(rolesEntity);
+    findUser.setPrimaryRole(selectPrimaryRole(rolesEntity));
+    findUser.setValid(true);
+
+    log.info("Update user role {} into {}", findUser.getUsername(), rolesEntity);
+
+    // 저장후 반환
+    return userMapper.EntityToDTO(userRepository.save(findUser));
+  }
+
+  // primaryRole 지정을 위한 함수
+  private RoleType selectPrimaryRole(Set<RoleEntity> roles) {
+    Set<RoleType> roleTypes = roles.stream()
+        .map(RoleEntity::getName)
+        .collect(Collectors.toSet());
+
+    if (roleTypes.contains(RoleType.ADMIN)) {
+      return RoleType.ADMIN;
+    }
+    if (roleTypes.contains(RoleType.MODERATOR)) {
+      return RoleType.MODERATOR;
+    }
+    if (roleTypes.contains(RoleType.WAREHOUSE_MANAGER)) {
+      return RoleType.WAREHOUSE_MANAGER;
+    }
+    return RoleType.USER;
   }
 
 
@@ -96,8 +157,6 @@ public class UserService {
     }
 
     HospitalEntity hospital = hospitalService.getHospitalById(userDTO.getHospital());
-    PermissionEntity permission = permissionService.getPermission(userDTO.getPermission());
-
 
     return UserEntity.builder()
         .email(userDTO.getEmail())
@@ -108,7 +167,6 @@ public class UserService {
         .phoneNumber(userDTO.getPhoneNumber())
         .name(userDTO.getName())
         .hospital(hospital)
-        .permission(permission)
         .build();
   }
 }

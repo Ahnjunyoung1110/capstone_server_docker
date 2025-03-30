@@ -9,12 +9,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
-    private final long MAX_AGE_SECS = 3600;
+
 
 
     // cors 설정
     @Override
     public void addCorsMappings(CorsRegistry registry) {
+        final long MAX_AGE_SECS = 3600;
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:3000") // 해당 주소에서의 요청만 허용
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 해당 요청 종류만 허용

@@ -1,4 +1,4 @@
-package com.capstone.capstone_server.controller.Admin;
+package com.capstone.capstone_server.controller.admin;
 
 
 import com.capstone.capstone_server.dto.HospitalDTO;

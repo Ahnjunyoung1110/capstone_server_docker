@@ -7,8 +7,10 @@ services:
     volumes:
       - ./src:/app/src
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
   redis:
     image: redis:6.2
     ports:
@@ -22,5 +24,14 @@ services:
       - MARIADB_DATABASE=devdb
       - MARIADB_USER=devuser
       - MARIADB_PASSWORD=changeme
+    depends_on:
+      - redis
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-psome_root_password" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+
 volumes: #외부 저장소 정의
   dev-db-data:

@@ -1,5 +1,7 @@
 package com.capstone.capstone_server.dto;
 
+import com.capstone.capstone_server.entity.RoleEntity.RoleType;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,5 +22,6 @@ public class UserDTO {
   private String phoneNumber;
   private String name;
   private Integer hospital;
-  private Integer permission;
+  private Set<RoleType> roles;
+  private RoleType primaryRole;
 }

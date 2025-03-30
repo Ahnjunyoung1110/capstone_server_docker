@@ -1,10 +1,10 @@
-package com.capstone.capstone_server.controller.Admin;
+package com.capstone.capstone_server.controller.admin;
 
 
 import com.capstone.capstone_server.dto.WasteTypeDTO;
 import com.capstone.capstone_server.entity.WasteTypeEntity;
 import com.capstone.capstone_server.mapper.WasteTypeMapper;
-import com.capstone.capstone_server.service.Waste.WasteTypeService;
+import com.capstone.capstone_server.service.waste.WasteTypeService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +52,8 @@ public class WasteTypeController {
   }
 
   @PutMapping("/update/{id}")
-  public ResponseEntity<WasteTypeDTO> UpdateWasteType(@PathVariable int id, @RequestBody WasteTypeDTO wasteTypeDTO) {
+  public ResponseEntity<WasteTypeDTO> UpdateWasteType(@PathVariable int id,
+      @RequestBody WasteTypeDTO wasteTypeDTO) {
     WasteTypeDTO response = wasteTypeService.updateWasteType(wasteTypeDTO, id);
     return ResponseEntity.ok(response);
   }

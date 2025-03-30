@@ -1,10 +1,10 @@
-package com.capstone.capstone_server.controller.User;
+package com.capstone.capstone_server.controller.user;
 
 
 import com.capstone.capstone_server.dto.WasteTypeDTO;
 import com.capstone.capstone_server.entity.WasteTypeEntity;
 import com.capstone.capstone_server.mapper.WasteTypeMapper;
-import com.capstone.capstone_server.service.Waste.WasteTypeService;
+import com.capstone.capstone_server.service.waste.WasteTypeService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

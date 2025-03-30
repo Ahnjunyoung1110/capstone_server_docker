@@ -1,8 +1,9 @@
-package com.capstone.capstone_server.controller.User;
+package com.capstone.capstone_server.controller.user;
 
 
 import com.capstone.capstone_server.dto.UserDTO;
 import com.capstone.capstone_server.entity.UserEntity;
+import com.capstone.capstone_server.mapper.UserMapper;
 import com.capstone.capstone_server.security.TokenProvider;
 import com.capstone.capstone_server.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -20,11 +21,13 @@ public class UserController {
 
   private final UserService userService;
   private final TokenProvider tokenProvider;
+  private final UserMapper userMapper;
 
   @Autowired
-  public UserController(TokenProvider tokenProvider, UserService userService) {
+  public UserController(TokenProvider tokenProvider, UserService userService, UserMapper userMapper) {
     this.tokenProvider = tokenProvider;
     this.userService = userService;
+    this.userMapper = userMapper;
   }
 
   // 회원가입 메서드
@@ -50,7 +53,9 @@ public class UserController {
     String token = tokenProvider.generateToken(userEntity);
 
     // 리턴
-    UserDTO responseDTO = UserDTO.builder().token(token).build();
+    UserDTO responseDTO = userMapper.EntityToDTO(userEntity);
+    responseDTO.setToken(token);
+
     return ResponseEntity.ok().body(responseDTO);
   }
 

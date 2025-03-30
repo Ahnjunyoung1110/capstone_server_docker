@@ -1,4 +1,4 @@
-package com.capstone.capstone_server.service.Waste;
+package com.capstone.capstone_server.service.waste;
 
 
 import com.capstone.capstone_server.dto.WasteTypeDTO;
@@ -7,7 +7,6 @@ import com.capstone.capstone_server.mapper.WasteTypeMapper;
 import com.capstone.capstone_server.repository.WasteTypeRepository;
 import java.util.List;
 import java.util.Optional;
-import javax.swing.text.html.Option;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,8 @@ public class WasteTypeService {
   private final WasteTypeMapper wasteTypeMapper;
 
   @Autowired
-  public WasteTypeService(WasteTypeRepository wasteTypeRepository, WasteTypeMapper wasteTypeMapper) {
+  public WasteTypeService(WasteTypeRepository wasteTypeRepository,
+      WasteTypeMapper wasteTypeMapper) {
     this.wasteTypeRepository = wasteTypeRepository;
     this.wasteTypeMapper = wasteTypeMapper;
   }
@@ -46,7 +46,6 @@ public class WasteTypeService {
 
     WasteTypeEntity wasteTypeEntity = wasteTypeMapper.toWasteTypeEntity(wasteTypeDTO);
     WasteTypeEntity responseEntity = wasteTypeRepository.save(wasteTypeEntity);
-
 
     return wasteTypeMapper.toWasteDTO(responseEntity);
   }
@@ -85,11 +84,7 @@ public class WasteTypeService {
     if (wasteTypeEntity.isEmpty()) {
       throw new IllegalArgumentException("WasteType not found");
     }
-
-    // 해당 폐기물의 활성화 상태를 false로 변경
-    WasteTypeEntity deleteEntity = wasteTypeEntity.get();
-    deleteEntity.setValid(false);
-    wasteTypeRepository.save(deleteEntity);
+    wasteTypeRepository.delete(wasteTypeEntity.get());
   }
 
 

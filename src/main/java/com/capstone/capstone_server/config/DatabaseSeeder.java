@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,9 +43,10 @@ public class DatabaseSeeder implements CommandLineRunner {
         // Admin이 있는지 확인
         Optional<RoleEntity> admin = roleRepository.findByName(RoleType.ADMIN);
 
-        // 없다면 생성수 adminRole에 저장
+        // 없다면 생성후 adminRole에 저장
         RoleEntity adminRole = admin.orElseGet(() -> {
-          RoleEntity newAdminRole = RoleEntity.builder().name(RoleType.ADMIN).build();
+          RoleEntity newAdminRole = RoleEntity.builder().name(RoleType.ADMIN).description("어드민")
+              .build();
           log.info("Admin role created");
           return roleRepository.save(newAdminRole);
         });
@@ -55,8 +55,27 @@ public class DatabaseSeeder implements CommandLineRunner {
         Optional<RoleEntity> user = roleRepository.findByName(RoleType.USER);
 
         RoleEntity userRole = user.orElseGet(() -> {
-          RoleEntity newUserRole = RoleEntity.builder().name(RoleType.USER).build();
+          RoleEntity newUserRole = RoleEntity.builder().name(RoleType.USER).description("일반 유저")
+              .build();
           log.info("✅ USER Role created");
+          return roleRepository.save(newUserRole);
+        });
+
+        Optional<RoleEntity> moderator = roleRepository.findByName(RoleType.MODERATOR);
+
+        RoleEntity moderatorRole = user.orElseGet(() -> {
+          RoleEntity newUserRole = RoleEntity.builder().name(RoleType.MODERATOR).description("중간 관리자")
+              .build();
+          log.info("✅ MODERATOR Role created");
+          return roleRepository.save(newUserRole);
+        });
+
+        Optional<RoleEntity> warehouse = roleRepository.findByName(RoleType.WAREHOUSE_MANAGER);
+
+        RoleEntity warehouseRole = user.orElseGet(() -> {
+          RoleEntity newUserRole = RoleEntity.builder().name(RoleType.WAREHOUSE_MANAGER).description("창고 관리자")
+              .build();
+          log.info("✅ WAREHOUSE_MANAGER Role created");
           return roleRepository.save(newUserRole);
         });
 
@@ -72,9 +91,11 @@ public class DatabaseSeeder implements CommandLineRunner {
               .createdAt(new Date())
               .updatedAt(new Date())
               .valid(true)
-              .roles(new HashSet<>(Set.of(adminRole, userRole)))
+              .roles(new HashSet<>(Set.of(adminRole, userRole, moderatorRole, warehouseRole)))
               .build();
 
+          userRepository.save(adminUser);
+          adminUser.setValid(true);
           userRepository.save(adminUser);
           log.info("Admin created");
         }
