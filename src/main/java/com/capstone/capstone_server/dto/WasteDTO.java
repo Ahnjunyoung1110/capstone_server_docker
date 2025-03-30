@@ -17,4 +17,5 @@ public class WasteDTO {
   private Integer beacon;
   private Integer wasteType;
   private Integer wasteStatus;
+  private String description;
 }

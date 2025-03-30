@@ -35,7 +35,7 @@ public class HospitalAdminController {
   추가적인 병원을 추가하는 컨트롤러
    */
   @PostMapping("/addHs")
-  public ResponseEntity<?> addHospital(@RequestBody HospitalDTO hospitalDTO) {
+  public ResponseEntity<HospitalDTO> addHospital(@RequestBody HospitalDTO hospitalDTO) {
     log.info("addHospital request: {}", hospitalDTO);
 
     HospitalEntity hospitalEntity = hospitalMapper.toEntity(hospitalDTO);
@@ -43,15 +43,16 @@ public class HospitalAdminController {
     log.info("addHospital response: {}", hospitalEntity);
 
     HospitalEntity createdHospital = hospitalService.createHospital(hospitalEntity);
+    HospitalDTO response = hospitalMapper.toDto(createdHospital);
 
-    return ResponseEntity.ok().body(createdHospital);
+    return ResponseEntity.ok().body(response);
   }
 
   /*
   현재 병원을 업데이트 하는 컨트롤러
    */
   @PutMapping("/updateHs")
-  public ResponseEntity<?> updateHospital(@RequestBody HospitalDTO hospitalDTO) {
+  public ResponseEntity<HospitalDTO> updateHospital(@RequestBody HospitalDTO hospitalDTO) {
     log.info("updateHospital request: {}", hospitalDTO.getId());
 
     HospitalEntity hospitalEntity = hospitalMapper.toEntity(hospitalDTO);
@@ -60,14 +61,14 @@ public class HospitalAdminController {
 
     HospitalDTO updatedHospitalDTO = hospitalMapper.toDto(updatedHospital);
 
-    return ResponseEntity.ok().body(updatedHospital);
+    return ResponseEntity.ok().body(updatedHospitalDTO);
   }
 
   /*
   병원을 삭제하는 컨트롤러
    */
   @DeleteMapping("/deleteHs/{id}")
-  public ResponseEntity<?> deleteHospital(@PathVariable Integer id) {
+  public ResponseEntity<HospitalDTO> deleteHospital(@PathVariable Integer id) {
     log.info("deleteHospital request: {}", id);
 
     HospitalEntity deletedEntity = hospitalService.deleteHospital(id);

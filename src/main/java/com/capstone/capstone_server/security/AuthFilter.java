@@ -47,7 +47,7 @@ public class AuthFilter extends OncePerRequestFilter {
         logger.info("user Role: " + userDetails.getAuthorities());
 
         // 사용자의 인증 정보를 Spring Security에 등록
-        AbstractAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(uuid, null,
+        AbstractAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null,
             userDetails.getAuthorities());
 
         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

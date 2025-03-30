@@ -28,7 +28,7 @@ public class WasteTypeUserController {
 
 
   @GetMapping()
-  public ResponseEntity<?> GetAll() {
+  public ResponseEntity<List<WasteTypeDTO>> GetAll() {
     List<WasteTypeEntity> typeEntities = wasteTypeService.GetAllWasteTypes();
 
     List<WasteTypeDTO> typeDTO = wasteTypeMapper.toDTOList(typeEntities);

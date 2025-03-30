@@ -31,7 +31,7 @@ public class StorageController {
 
   // 조건에 맞춰 창고를 리턴
   @GetMapping
-  public ResponseEntity<?> getAllStorage(
+  public ResponseEntity<List<StorageDTO>> getAllStorage(
       @RequestParam(required = false) Boolean valid, // 필수, 현재 활성화된 창고 여부
       @RequestParam(required = false) Integer hospitalId // 소속 병원 창고 여부
   ) {
@@ -47,7 +47,7 @@ public class StorageController {
 
   // 새로운 창고를 생성
   @PostMapping("/createSr")
-  public ResponseEntity<?> createStorage(@RequestBody StorageDTO storageDTO) {
+  public ResponseEntity<StorageDTO> createStorage(@RequestBody StorageDTO storageDTO) {
     log.info("createStorageController");
 
     // 저장
@@ -59,7 +59,7 @@ public class StorageController {
 
   // 기존 창고를 업데이트
   @PutMapping("/updateSr")
-  public ResponseEntity<?> updateStorage(@RequestBody StorageDTO storageDTO) {
+  public ResponseEntity<StorageDTO> updateStorage(@RequestBody StorageDTO storageDTO) {
     log.info("updateStorageController");
 
     //저장

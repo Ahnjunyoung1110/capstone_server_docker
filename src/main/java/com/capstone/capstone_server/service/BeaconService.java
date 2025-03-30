@@ -84,7 +84,7 @@ public class BeaconService {
     entity.setHospital(getEntity.getHospital());
     entity.setLabel(getEntity.getLabel());
     entity.setLocation(getEntity.getLocation());
-    entity.setUsed(entity.isUsed());
+    entity.setUsed(getEntity.isUsed());
     BeaconEntity updatedEntity = beaconReposiroty.save(entity);
 
     return beaconMapper.toBeaconDTO(updatedEntity);
@@ -116,13 +116,14 @@ public class BeaconService {
     // 변환 후 반환
     return BeaconEntity.builder()
         .id(beaconDTO.getId())
+        .uuid(beaconDTO.getUuid())
         .deviceAddress(beaconDTO.getDeviceAddress())
         .major(beaconDTO.getMajor())
         .minor(beaconDTO.getMinor())
         .hospital(hospital)
         .location(beaconDTO.getLocation())
         .label(beaconDTO.getLabel())
-        .isUsed(beaconDTO.getIsUsed())
+        .used(beaconDTO.getUsed().equals(true))
         .build();
   }
 

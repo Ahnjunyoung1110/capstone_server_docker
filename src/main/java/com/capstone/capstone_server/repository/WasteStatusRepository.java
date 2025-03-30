@@ -8,4 +8,6 @@ public interface WasteStatusRepository extends JpaRepository<WasteStatusEntity, 
 
   List<WasteStatusEntity> findAllByOrderByStatusLevelAsc();
 
+  WasteStatusEntity findByStatusLevel(Integer statusLevel);
+
 }

@@ -52,7 +52,7 @@ public class UserEntity {
   private HospitalEntity hospital;
 
   @ManyToOne
-  @JoinColumn
+  @JoinColumn()
   private PermissionEntity permission;
 
   @Temporal(TemporalType.TIMESTAMP)
@@ -61,6 +61,7 @@ public class UserEntity {
   @Temporal(TemporalType.TIMESTAMP)
   private Date updatedAt; // 마지막 업데이트 일
 
+  @Builder.Default
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
       joinColumns = @JoinColumn,

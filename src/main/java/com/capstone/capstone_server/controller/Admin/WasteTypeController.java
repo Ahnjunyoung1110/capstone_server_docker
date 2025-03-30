@@ -36,7 +36,7 @@ public class WasteTypeController {
 
 
   @GetMapping()
-  public ResponseEntity<?> GetAll() {
+  public ResponseEntity<List<WasteTypeDTO>> GetAll() {
     List<WasteTypeEntity> typeEntities = wasteTypeService.GetAllWasteTypes();
 
     List<WasteTypeDTO> typeDTO = wasteTypeMapper.toDTOList(typeEntities);
@@ -45,14 +45,14 @@ public class WasteTypeController {
   }
 
   @PostMapping("/create")
-  public ResponseEntity<?> CreateWasteType(@RequestBody WasteTypeDTO wasteTypeDTO) {
+  public ResponseEntity<WasteTypeDTO> CreateWasteType(@RequestBody WasteTypeDTO wasteTypeDTO) {
     WasteTypeDTO response = wasteTypeService.createWasteType(wasteTypeDTO);
 
     return ResponseEntity.ok(response);
   }
 
   @PutMapping("/update/{id}")
-  public ResponseEntity<?> UpdateWasteType(@PathVariable int id, @RequestBody WasteTypeDTO wasteTypeDTO) {
+  public ResponseEntity<WasteTypeDTO> UpdateWasteType(@PathVariable int id, @RequestBody WasteTypeDTO wasteTypeDTO) {
     WasteTypeDTO response = wasteTypeService.updateWasteType(wasteTypeDTO, id);
     return ResponseEntity.ok(response);
   }

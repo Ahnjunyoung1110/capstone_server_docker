@@ -48,7 +48,7 @@ public class BeaconEntity {
   private HospitalEntity hospital;
 
   @Builder.Default
-  private boolean isUsed = false;
+  private boolean used = false;
 
   @Temporal(TemporalType.TIMESTAMP)
   private Date createdAt;

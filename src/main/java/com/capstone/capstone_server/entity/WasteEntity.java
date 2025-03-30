@@ -47,6 +47,10 @@ public class WasteEntity {
   @JoinColumn(nullable = false)
   private BeaconEntity beacon;
 
+
+  // 폐기물 설명
+  private String description;
+
   // 폐기물 종류
   @ManyToOne
   @JoinColumn(nullable = false)

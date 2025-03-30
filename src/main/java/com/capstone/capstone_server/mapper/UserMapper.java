@@ -8,8 +8,10 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
+
   @Mapping(source = "hospital.id", target = "hospital")
   @Mapping(source = "permission.id", target = "permission")
+  @Mapping(target = "token", ignore = true)
   UserDTO EntityToDTO(UserEntity userEntity);
 
   @Mapping(source = "hospital.id", target = "hospital")

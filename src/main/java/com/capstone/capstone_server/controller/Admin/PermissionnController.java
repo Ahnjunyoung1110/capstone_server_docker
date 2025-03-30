@@ -39,7 +39,7 @@ public class PermissionnController {
   }
 
   @PostMapping("/createPm")
-  public ResponseEntity<?> createPm(@RequestBody PermissionDTO permission) {
+  public ResponseEntity<List<PermissionDTO>> createPm(@RequestBody PermissionDTO permission) {
     PermissionEntity permissionEntity = permissionMapper.toPermissionEntity(permission);
 
     List<PermissionEntity> createdEntities = permissionService.createPermission(permissionEntity);
@@ -51,7 +51,7 @@ public class PermissionnController {
   }
 
   @PutMapping("/updatePm")
-  public ResponseEntity<?> updatePm(@RequestBody PermissionDTO permission) {
+  public ResponseEntity<List<PermissionDTO>> updatePm(@RequestBody PermissionDTO permission) {
     PermissionEntity permissionEntity = permissionMapper.toPermissionEntity(permission);
 
     List<PermissionEntity> updatedEntity = permissionService.createPermission(permissionEntity);

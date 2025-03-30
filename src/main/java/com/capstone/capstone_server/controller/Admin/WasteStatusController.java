@@ -32,25 +32,27 @@ public class WasteStatusController {
 
 
   @GetMapping
-  public ResponseEntity<?> getWasteStatus() {
+  public ResponseEntity<List<WasteStatusDTO>> getWasteStatus() {
     return ResponseEntity.ok(wasteStatusService.getWasteStatus());
   }
 
   @PostMapping("/create")
-  public ResponseEntity<?> createWasteStatus(@RequestBody WasteStatusDTO wasteStatusDTO) {
+  public ResponseEntity<List<WasteStatusDTO>> createWasteStatus(
+      @RequestBody WasteStatusDTO wasteStatusDTO) {
     log.info("Waste status create {}", wasteStatusDTO);
 
     return ResponseEntity.ok(wasteStatusService.createWasteStatus(wasteStatusDTO));
   }
 
   @PutMapping("/update")
-  public ResponseEntity<?> updateWasteStatus(@RequestBody List<WasteStatusDTO> wasteStatusDTOs) {
+  public ResponseEntity<List<WasteStatusDTO>> updateWasteStatus(
+      @RequestBody List<WasteStatusDTO> wasteStatusDTOs) {
     log.info("Waste status update {}", wasteStatusDTOs);
     return ResponseEntity.ok(wasteStatusService.updateWasteStatus(wasteStatusDTOs));
   }
 
   @DeleteMapping("/delete/{id}")
-  public ResponseEntity<?> deleteWasteStatus(@PathVariable int id) {
+  public ResponseEntity<List<WasteStatusDTO>> deleteWasteStatus(@PathVariable int id) {
     log.info("Waste status delete {}", id);
     return ResponseEntity.ok(wasteStatusService.deleteWasteStatus(id));
   }

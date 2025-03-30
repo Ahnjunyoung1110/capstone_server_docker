@@ -29,7 +29,7 @@ public class UserController {
 
   // 회원가입 메서드
   @PostMapping("/signup")
-  public ResponseEntity<?> signUp(@RequestBody UserDTO userDTO) {
+  public ResponseEntity<UserDTO> signUp(@RequestBody UserDTO userDTO) {
     log.info("Sign up user request: {}", userDTO);
 
     // 유저 생성 후 반환
@@ -39,7 +39,7 @@ public class UserController {
 
   // 로그인 메서드
   @PostMapping("/signin")
-  public ResponseEntity<?> signIn(@RequestBody UserDTO userDTO) {
+  public ResponseEntity<UserDTO> signIn(@RequestBody UserDTO userDTO) {
     log.info("Sign in user request: {}", userDTO);
 
     // 주어진 ID와 password를 이용해서 유저를 검색

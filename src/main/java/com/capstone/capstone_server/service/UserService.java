@@ -32,6 +32,11 @@ public class UserService {
     this.permissionService = permissionService;
   }
 
+  // uuid를 통해 Entity를 반환받는 메서드
+  public UserEntity findByUuid(String uuid) {
+    return userRepository.findById(uuid).orElse(null);
+  }
+
   // 신규 생성 메서드
   public UserDTO createUser(UserDTO userDTO) {
     if (userDTO == null) { // 유저 엔티티를 받지 못한 경우

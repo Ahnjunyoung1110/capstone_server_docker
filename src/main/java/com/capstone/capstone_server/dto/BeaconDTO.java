@@ -27,6 +27,6 @@ public class BeaconDTO {
 
   private Integer hospitalId;
 
-  private Boolean isUsed;
+  private Boolean used;
 
 }

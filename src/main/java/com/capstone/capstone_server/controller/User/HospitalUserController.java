@@ -31,7 +31,7 @@ public class HospitalUserController {
   모든 병원을 리턴하는 함수
    */
   @GetMapping()
-  public ResponseEntity<?> getHospitalService() {
+  public ResponseEntity<List<HospitalDTO>> getHospitalService() {
     log.info("getAllHospitalService request");
     List<HospitalEntity> allHospitals = hospitalService.getAllHospitals();
 

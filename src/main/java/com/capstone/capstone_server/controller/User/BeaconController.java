@@ -3,6 +3,7 @@ package com.capstone.capstone_server.controller.User;
 
 import com.capstone.capstone_server.dto.BeaconDTO;
 import com.capstone.capstone_server.service.BeaconService;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,26 +30,26 @@ public class BeaconController {
 
 
   @GetMapping
-  public ResponseEntity<?> getAllBeacons() {
+  public ResponseEntity<List<BeaconDTO>> getAllBeacons() {
     log.info("getAllBeacons Controller");
 
     return ResponseEntity.ok(beaconService.getAllBeacons());
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<?> getBeaconById(@PathVariable("id") int id) {
+  public ResponseEntity<BeaconDTO> getBeaconById(@PathVariable("id") int id) {
     log.info("getBeaconById Controller");
     return ResponseEntity.ok(beaconService.getBeaconById(id));
   }
 
   @PostMapping("/createBc")
-  public ResponseEntity<?> createBeacon(@RequestBody BeaconDTO beaconDTO) {
+  public ResponseEntity<BeaconDTO> createBeacon(@RequestBody BeaconDTO beaconDTO) {
     log.info("createBeacon Controller");
     return ResponseEntity.ok(beaconService.createBeacon(beaconDTO));
   }
 
   @PutMapping("/updateBc/{id}")
-  public ResponseEntity<?> updateBeacon(@PathVariable("id") int id, @RequestBody BeaconDTO beaconDTO) {
+  public ResponseEntity<BeaconDTO> updateBeacon(@PathVariable("id") int id, @RequestBody BeaconDTO beaconDTO) {
     log.info("updateBeacon Controller");
     return ResponseEntity.ok(beaconService.updateBeacon(id, beaconDTO));
   }

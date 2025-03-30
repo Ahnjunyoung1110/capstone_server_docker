@@ -1,11 +1,12 @@
 package com.capstone.capstone_server.entity;
 
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Temporal;
@@ -16,38 +17,39 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @Entity
 @Builder
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
-
-public class WasteTypeEntity {
+public class WasteLogEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
+  private String description;
 
-  // 명칭
-  @Column(nullable = false)
-  private String typeName;
+  @ManyToOne
+  @JoinColumn(nullable = false)
+  private WasteStatusEntity status;
 
+  @ManyToOne
+  @JoinColumn(nullable = false)
+  private WasteEntity waste;
 
-  // 보관기일
-  @Column(nullable = false)
-  private Integer period;
+  @ManyToOne
+  @JoinColumn(nullable = false)
+  private UserEntity user;
 
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date createdAt;
 
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date updatedAt;
 
   @Builder.Default
-  private Boolean valid = true;
-
-  @Temporal(TemporalType.TIMESTAMP)
-  private Date createdAt; // 계정 생성일
-
-  @Temporal(TemporalType.TIMESTAMP)
-  private Date updatedAt; // 마지막 업데이트 일
+  private boolean valid = true;
 
   // 최초 생성시 실행
   // createdAt 과 updatedAt을 현재시간으로 설정한다.
@@ -55,7 +57,6 @@ public class WasteTypeEntity {
   protected void onCreate() {
     this.createdAt = new Date();
     this.updatedAt = new Date();
-    this.valid = true;
   }
 
   // 업데이트시 실행
