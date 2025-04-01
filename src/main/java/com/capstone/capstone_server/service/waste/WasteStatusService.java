@@ -38,8 +38,12 @@ public class WasteStatusService {
   }
 
   // 이전 WasteStatus를 리턴
-  public WasteStatusEntity transportTrue(WasteStatusEntity wasteStatusEntity) {
-    return wasteStatusRepository.findByStatusLevel(wasteStatusEntity.getStatusLevel() - 1);
+  public WasteStatusEntity transportTrue(WasteStatusEntity wasteStatusEntity, int count) {
+    if(wasteStatusRepository.count() < count + wasteStatusEntity.getStatusLevel()) {
+      log.warn("already final transport");
+      throw new RuntimeException("already final transport");
+    }
+    return wasteStatusRepository.findByStatusLevel(wasteStatusEntity.getStatusLevel() + count);
   }
 
   // 신규 생성

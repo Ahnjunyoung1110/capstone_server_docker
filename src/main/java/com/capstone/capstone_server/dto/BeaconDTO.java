@@ -13,13 +13,7 @@ public class BeaconDTO {
 
   private Integer id;
 
-  private String uuid;
-
   private String deviceAddress;
-
-  private Integer major;
-
-  private Integer minor;
 
   private String location;
 

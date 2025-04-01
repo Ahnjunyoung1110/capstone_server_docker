@@ -72,20 +72,6 @@ public class WasteService {
     return wastes;
   }
 
-  // 활성화된 폐기물만을 리턴
-  public List<WasteEntity> getAllWastesValidHs(String uuid) {
-    if (uuid == null) {
-      throw new IllegalArgumentException("uuid cannot be null");
-    }
-
-    // uuid를 통해 병원의 폐기물을 검색 후 리턴
-    List<WasteEntity> wastes = wasteRepository.findAllByValidTrue(uuid);
-    if (wastes == null || wastes.isEmpty()) {
-      throw new IllegalArgumentException("해당 병원에는 현재 활성화된 폐기물이 존재하지 않습니다.");
-    }
-    return wastes;
-  }
-
   // 폐기물 pk를 통해 검색
   public WasteDTO findWasteById(String id) {
     log.info("findWasteById");
@@ -105,7 +91,7 @@ public class WasteService {
     WasteEntity responseEntity = wasteRepository.save(wasteEntity);
     UserEntity userEntity = userService.findByUuid(uuid);
     WasteStatusEntity wasteStatus = wasteStatusService.getWasteStatusEntity(
-        wasteDTO.getWasteStatus());
+        wasteDTO.getWasteStatusId());
 
     wasteLogService.createWasteLog(wasteEntity, wasteStatus, userEntity, null);
 
@@ -128,7 +114,7 @@ public class WasteService {
     updateEntity.setWasteType(wasteEntity.getWasteType());
     log.info("update waste : {}", wasteEntity);
     // 순서대로 Status를 변경하는것이 맞는지 확인
-    WasteStatusEntity wasteStatus = wasteStatusService.transportTrue(wasteEntity.getWasteStatus());
+    WasteStatusEntity wasteStatus = wasteStatusService.transportTrue(wasteEntity.getWasteStatus(), -1);
     if (wasteStatus != updateEntity.getWasteStatus()) {
       log.warn("Wrong waste status now:{} Update:{}", wasteStatus, updateEntity.getWasteStatus());
       throw new IllegalArgumentException("Wrong waste status now");
@@ -145,6 +131,24 @@ public class WasteService {
         wasteDTO.getDescription());
 
     return wasteMapper.toWasteDTO(updateEntity);
+  }
+
+  // 폐기물을 다음단계로 변경
+  public WasteDTO toNextStatus(String wasteId) {
+    WasteEntity waste = wasteRepository.findById(wasteId).orElse(null);
+    if (waste == null) {
+      log.warn("No waste found with id {}", wasteId);
+      throw new IllegalArgumentException("No waste found with id " + wasteId);
+    }
+    log.info("Change : {}", waste);
+    WasteStatusEntity wasteStatus = wasteStatusService.transportTrue(waste.getWasteStatus(), +1);
+
+    log.info("To : {}", wasteStatus);
+
+    waste.setWasteStatus(wasteStatus);
+    wasteRepository.save(waste);
+    return wasteMapper.toWasteDTO(waste);
+
   }
 
   // 폐기물 삭제
@@ -169,28 +173,28 @@ public class WasteService {
     }
 
     // 병원 검색
-    HospitalEntity hospital = hospitalService.getHospitalById(wasteDTO.getHospital());
+    HospitalEntity hospital = hospitalService.getHospitalById(wasteDTO.getHospitalId());
     if (hospital == null) {
       log.error("hospital not found");
       throw new IllegalArgumentException("hospital not found");
     }
 
     // 저장 창고 검색
-    StorageEntity storage = storageService.getStorageById(wasteDTO.getStorage());
+    StorageEntity storage = storageService.getStorageById(wasteDTO.getStorageId());
     if (storage == null) {
       log.error("storage not found");
       throw new IllegalArgumentException("storage not found");
     }
 
     // 비콘 검색
-    BeaconEntity beacon = beaconService.getBeaconEntityById(wasteDTO.getBeacon());
+    BeaconEntity beacon = beaconService.getBeaconEntityById(wasteDTO.getBeaconId());
     if (beacon == null) {
       log.error("beacon not found");
       throw new IllegalArgumentException("beacon not found");
     }
 
     // wasteType 검색
-    WasteTypeEntity wasteType = wasteTypeService.GetWasteTypeById(wasteDTO.getWasteType());
+    WasteTypeEntity wasteType = wasteTypeService.GetWasteTypeById(wasteDTO.getWasteTypeId());
     if (wasteType == null) {
       log.error("waste type not found");
       throw new IllegalArgumentException("waste type not found");
@@ -198,7 +202,7 @@ public class WasteService {
 
     // wasteStatus 검색
     WasteStatusEntity wasteStatus = wasteStatusService.getWasteStatusEntity(
-        wasteDTO.getWasteStatus());
+        wasteDTO.getWasteStatusId());
     if (wasteStatus == null) {
       log.error("waste status not found");
       throw new IllegalArgumentException("waste status not found");

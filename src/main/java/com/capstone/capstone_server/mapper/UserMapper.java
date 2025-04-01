@@ -14,12 +14,12 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-  @Mapping(source = "hospital.id", target = "hospital")
+  @Mapping(source = "hospital.id", target = "hospitalId")
   @Mapping(target = "token", ignore = true)
   @Mapping(source = "roles", target = "roles", qualifiedByName = "mapRoles")
   UserDTO EntityToDTO(UserEntity userEntity);
 
-  @Mapping(source = "hospital.id", target = "hospital")
+  @Mapping(source = "hospital.id", target = "hospitalId")
   List<UserDTO> EntityToDTOList(List<UserDTO> userDTOList);
 
   @Named("mapRoles")

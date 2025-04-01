@@ -6,6 +6,7 @@ import com.capstone.capstone_server.entity.UserEntity;
 import com.capstone.capstone_server.mapper.UserMapper;
 import com.capstone.capstone_server.security.TokenProvider;
 import com.capstone.capstone_server.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,10 @@ public class UserController {
   }
 
   // 회원가입 메서드
+  @Operation(
+      summary = "회원가입",
+      description = "유저 권한으로 회원가입을 신청합니다."
+  )
   @PostMapping("/signup")
   public ResponseEntity<UserDTO> signUp(@RequestBody UserDTO userDTO) {
     log.info("Sign up user request: {}", userDTO);
@@ -41,6 +46,10 @@ public class UserController {
   }
 
   // 로그인 메서드
+  @Operation(
+      summary = "로그인",
+      description = "유저 권한으로 로그인 후 토큰을 받아갑니다."
+  )
   @PostMapping("/signin")
   public ResponseEntity<UserDTO> signIn(@RequestBody UserDTO userDTO) {
     log.info("Sign in user request: {}", userDTO);

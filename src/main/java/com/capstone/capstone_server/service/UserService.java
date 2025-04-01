@@ -47,7 +47,7 @@ public class UserService {
     if (userDTO == null) { // 유저 엔티티를 받지 못한 경우
       throw new IllegalArgumentException("userEntity is null");
     }
-    if (userDTO.getHospital() == null) {
+    if (userDTO.getHospitalId() == null) {
       throw new IllegalArgumentException("hospital is null");
     }
 
@@ -156,7 +156,7 @@ public class UserService {
       throw new IllegalArgumentException("userDTO is null");
     }
 
-    HospitalEntity hospital = hospitalService.getHospitalById(userDTO.getHospital());
+    HospitalEntity hospital = hospitalService.getHospitalById(userDTO.getHospitalId());
 
     return UserEntity.builder()
         .email(userDTO.getEmail())

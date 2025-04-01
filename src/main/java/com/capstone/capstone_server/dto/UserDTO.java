@@ -21,7 +21,7 @@ public class UserDTO {
   private String email;
   private String phoneNumber;
   private String name;
-  private Integer hospital;
+  private Integer hospitalId;
   private Set<RoleType> roles;
   private RoleType primaryRole;
 }

@@ -5,6 +5,7 @@ import com.capstone.capstone_server.dto.HospitalDTO;
 import com.capstone.capstone_server.entity.HospitalEntity;
 import com.capstone.capstone_server.mapper.HospitalMapper;
 import com.capstone.capstone_server.service.HospitalService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,6 +35,10 @@ public class HospitalAdminController {
   /*
   추가적인 병원을 추가하는 컨트롤러
    */
+  @Operation(
+      summary = "병원 추가",
+      description = "어드민 권한으로 병원을 추가합니다."
+  )
   @PostMapping("/addHs")
   public ResponseEntity<HospitalDTO> addHospital(@RequestBody HospitalDTO hospitalDTO) {
     log.info("addHospital request: {}", hospitalDTO);
@@ -51,6 +56,10 @@ public class HospitalAdminController {
   /*
   현재 병원을 업데이트 하는 컨트롤러
    */
+  @Operation(
+      summary = "병원 업데이트 ",
+      description = "어드민 권한으로 병원을 업데이트 합니다."
+  )
   @PutMapping("/updateHs")
   public ResponseEntity<HospitalDTO> updateHospital(@RequestBody HospitalDTO hospitalDTO) {
     log.info("updateHospital request: {}", hospitalDTO.getId());
@@ -67,6 +76,11 @@ public class HospitalAdminController {
   /*
   병원을 삭제하는 컨트롤러
    */
+  @Operation(
+      summary = "병원 삭제 ",
+      description = "어드민 권한으로 병원을 삭제(비활성화) 합니다."
+  )
+
   @DeleteMapping("/deleteHs/{id}")
   public ResponseEntity<HospitalDTO> deleteHospital(@PathVariable Integer id) {
     log.info("deleteHospital request: {}", id);

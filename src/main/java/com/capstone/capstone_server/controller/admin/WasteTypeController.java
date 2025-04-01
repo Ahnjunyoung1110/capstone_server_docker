@@ -5,6 +5,7 @@ import com.capstone.capstone_server.dto.WasteTypeDTO;
 import com.capstone.capstone_server.entity.WasteTypeEntity;
 import com.capstone.capstone_server.mapper.WasteTypeMapper;
 import com.capstone.capstone_server.service.waste.WasteTypeService;
+import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,10 @@ public class WasteTypeController {
   }
 
 
+  @Operation(
+      summary = "폐기물 종류 획득 ",
+      description = "어드민 권한으로 모든 폐기물 종류를 반환 합니다."
+  )
   @GetMapping()
   public ResponseEntity<List<WasteTypeDTO>> GetAll() {
     List<WasteTypeEntity> typeEntities = wasteTypeService.GetAllWasteTypes();
@@ -44,6 +49,10 @@ public class WasteTypeController {
     return ResponseEntity.ok(typeDTO);
   }
 
+  @Operation(
+      summary = "폐기물 종류 생성 ",
+      description = "어드민 권한으로 새로운 폐기물 종류를 생성 합니다."
+  )
   @PostMapping("/create")
   public ResponseEntity<WasteTypeDTO> CreateWasteType(@RequestBody WasteTypeDTO wasteTypeDTO) {
     WasteTypeDTO response = wasteTypeService.createWasteType(wasteTypeDTO);
@@ -51,6 +60,10 @@ public class WasteTypeController {
     return ResponseEntity.ok(response);
   }
 
+  @Operation(
+      summary = "폐기물 종류 업데이트 ",
+      description = "어드민 권한으로 기존 폐기물 종류 업데이트 합니다."
+  )
   @PutMapping("/update/{id}")
   public ResponseEntity<WasteTypeDTO> UpdateWasteType(@PathVariable int id,
       @RequestBody WasteTypeDTO wasteTypeDTO) {
@@ -58,6 +71,11 @@ public class WasteTypeController {
     return ResponseEntity.ok(response);
   }
 
+
+  @Operation(
+      summary = "폐기물 종류 삭제 ",
+      description = "어드민 권한으로 폐기물 종류를 삭제 합니다."
+  )
   @DeleteMapping("/delete/{id}")
   public ResponseEntity<?> DeleteWasteType(@PathVariable int id) {
     wasteTypeService.deleteWasteType(id);

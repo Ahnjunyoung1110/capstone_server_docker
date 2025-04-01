@@ -3,6 +3,7 @@ package com.capstone.capstone_server.controller.user;
 
 import com.capstone.capstone_server.dto.StorageDTO;
 import com.capstone.capstone_server.service.StorageService;
+import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,10 @@ public class StorageController {
   }
 
   // 조건에 맞춰 창고를 리턴
+  @Operation(
+      summary = "창고 리턴",
+      description = "유저 권한으로 창고를 리턴합니다. param으로 hospitalId를 받습니다."
+  )
   @GetMapping
   public ResponseEntity<List<StorageDTO>> getAllStorage(
       @RequestParam(required = false) Integer hospitalId // 소속 병원 창고 여부
@@ -45,6 +50,10 @@ public class StorageController {
   }
 
   // 새로운 창고를 생성
+  @Operation(
+      summary = "창고 생성",
+      description = "유저 권한으로 창고를 생성합니다."
+  )
   @PostMapping("/createSr")
   public ResponseEntity<StorageDTO> createStorage(@RequestBody StorageDTO storageDTO) {
     log.info("createStorageController");
@@ -57,6 +66,10 @@ public class StorageController {
   }
 
   // 기존 창고를 업데이트
+  @Operation(
+      summary = "창고 업데이트",
+      description = "유저 권한으로 창고를 업데이트합니다."
+  )
   @PutMapping("/updateSr")
   public ResponseEntity<StorageDTO> updateStorage(@RequestBody StorageDTO storageDTO) {
     log.info("updateStorageController");
@@ -69,6 +82,10 @@ public class StorageController {
   }
 
   // 기존 창고를 삭제(비활성화)
+  @Operation(
+      summary = "창고 삭제",
+      description = "유저 권한으로 창고를 삭제합니다."
+  )
   @DeleteMapping("/deleteSr/{storageId}")
   public ResponseEntity<?> deleteStorage(@PathVariable Integer storageId) {
     log.info("deleteStorageController");

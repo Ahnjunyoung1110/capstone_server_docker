@@ -1,21 +1,24 @@
 package com.capstone.capstone_server.dto;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-public class WasteDTO {
-
+public class WasteAllDTO {
   private String id;
-  private Integer hospitalId;
-  private Integer storageId;
-  private Integer beaconId;
-  private Integer wasteTypeId;
-  private Integer wasteStatusId;
+  private Integer hospital;
+  private Integer storage;
+  private Integer beacon;
+  private Integer wasteType;
+  private Integer wasteStatus;
   private String description;
+  private List<WasteLogDTO> logs;
 }

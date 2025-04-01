@@ -13,9 +13,9 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface WasteLogMapper {
 
-  @Mapping(source = "waste.id", target = "waste")
-  @Mapping(source = "user.uuid", target = "user")
-  @Mapping(source = "status.id", target = "status")
+  @Mapping(source = "waste.id", target = "wasteId")
+  @Mapping(source = "user.uuid", target = "userId")
+  @Mapping(source = "status.id", target = "statusId")
   List<WasteLogDTO> entityToDtoList(List<WasteLogEntity> wasteLogEntity);
 
 

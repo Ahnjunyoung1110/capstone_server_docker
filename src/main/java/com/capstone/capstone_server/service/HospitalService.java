@@ -31,6 +31,10 @@ public class HospitalService {
 
   }
 
+  public HospitalEntity findHospitalByUuid(String uuid) {
+    return hospitalRepository.findByUuid(uuid);
+  }
+
   // 신규 병원 생성
   public HospitalEntity createHospital(HospitalEntity hospital) {
     if (hospital == null) {

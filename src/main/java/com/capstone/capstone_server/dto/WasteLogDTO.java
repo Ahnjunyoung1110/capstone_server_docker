@@ -14,9 +14,9 @@ import lombok.NoArgsConstructor;
 public class WasteLogDTO {
   private Integer id;
   private String description;
-  private Integer status;
-  private String waste;
-  private String user;
+  private Integer statusId;
+  private String wasteId;
+  private String userId;
   private Date createdAt;
   private Date updatedAt;
 }

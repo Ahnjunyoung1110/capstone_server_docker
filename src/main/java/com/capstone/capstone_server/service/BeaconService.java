@@ -26,9 +26,10 @@ public class BeaconService {
     this.hospitalService = hospitalService;
   }
 
-  // 전체 비컨 조회 메서드
-  public List<BeaconDTO> getAllBeacons() {
-    List<BeaconEntity> entities = beaconReposiroty.findAll();
+  // 소속 병원 전체 비컨 조회 메서드
+  public List<BeaconDTO> getAllBeacons(String uuid) {
+    HospitalEntity findhospital = hospitalService.findHospitalByUuid(uuid);
+    List<BeaconEntity> entities = beaconReposiroty.findAllByHospitalId(findhospital.getId());
 
     return beaconMapper.toBeaconDTOList(entities);
   }
@@ -79,8 +80,6 @@ public class BeaconService {
     }
 
     BeaconEntity getEntity = dToToEntitiy(beaconDTO);
-    entity.setMajor(getEntity.getMajor());
-    entity.setMinor(getEntity.getMinor());
     entity.setHospital(getEntity.getHospital());
     entity.setLabel(getEntity.getLabel());
     entity.setLocation(getEntity.getLocation());
@@ -116,10 +115,7 @@ public class BeaconService {
     // 변환 후 반환
     return BeaconEntity.builder()
         .id(beaconDTO.getId())
-        .uuid(beaconDTO.getUuid())
         .deviceAddress(beaconDTO.getDeviceAddress())
-        .major(beaconDTO.getMajor())
-        .minor(beaconDTO.getMinor())
         .hospital(hospital)
         .location(beaconDTO.getLocation())
         .label(beaconDTO.getLabel())
