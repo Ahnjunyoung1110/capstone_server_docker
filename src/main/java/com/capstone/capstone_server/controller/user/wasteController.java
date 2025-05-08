@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -169,11 +168,14 @@ public class wasteController {
   @Operation(
       summary = "다음 폐기물 상태로 변경",
       description = "DB를 검색해서 폐기물의 상태를 다음으로 변경시킨다."
+          + "description을 param으로 넣을 수 있다."
   )
-  @PatchMapping("/toNext/{id}")
-  public ResponseEntity<WasteDTO> transportStatus(@PathVariable String id) {
+  @PutMapping("/toNext/{id}")
+  public ResponseEntity<WasteDTO> transportStatus(
+      @AuthenticationPrincipal CustomUserDetails details, @PathVariable String id,
+      @RequestParam(required = false) String description) {
     log.info("transportStatus request {}", id);
-    WasteDTO wasteDTO = wasteService.toNextStatus(id);
+    WasteDTO wasteDTO = wasteService.toNextStatus(details.getUsername(), id, description);
     return ResponseEntity.ok().body(wasteDTO);
   }
 

@@ -114,7 +114,8 @@ public class WasteService {
     updateEntity.setWasteType(wasteEntity.getWasteType());
     log.info("update waste : {}", wasteEntity);
     // 순서대로 Status를 변경하는것이 맞는지 확인
-    WasteStatusEntity wasteStatus = wasteStatusService.transportTrue(wasteEntity.getWasteStatus(), -1);
+    WasteStatusEntity wasteStatus = wasteStatusService.transportTrue(wasteEntity.getWasteStatus(),
+        -1);
     if (wasteStatus != updateEntity.getWasteStatus()) {
       log.warn("Wrong waste status now:{} Update:{}", wasteStatus, updateEntity.getWasteStatus());
       throw new IllegalArgumentException("Wrong waste status now");
@@ -134,7 +135,7 @@ public class WasteService {
   }
 
   // 폐기물을 다음단계로 변경
-  public WasteDTO toNextStatus(String wasteId) {
+  public WasteDTO toNextStatus(String uuid, String wasteId, String description) {
     WasteEntity waste = wasteRepository.findById(wasteId).orElse(null);
     if (waste == null) {
       log.warn("No waste found with id {}", wasteId);
@@ -147,6 +148,11 @@ public class WasteService {
 
     waste.setWasteStatus(wasteStatus);
     wasteRepository.save(waste);
+
+    UserEntity logUser = userService.findByUuid(uuid);
+
+    wasteLogService.createWasteLog(waste, waste.getWasteStatus(), logUser, description);
+
     return wasteMapper.toWasteDTO(waste);
 
   }

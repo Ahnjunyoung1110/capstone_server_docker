@@ -61,19 +61,17 @@ public class DatabaseSeeder implements CommandLineRunner {
           return roleRepository.save(newUserRole);
         });
 
-        Optional<RoleEntity> moderator = roleRepository.findByName(RoleType.MODERATOR);
-
         RoleEntity moderatorRole = user.orElseGet(() -> {
-          RoleEntity newUserRole = RoleEntity.builder().name(RoleType.MODERATOR).description("중간 관리자")
+          RoleEntity newUserRole = RoleEntity.builder().name(RoleType.MODERATOR)
+              .description("중간 관리자")
               .build();
           log.info("✅ MODERATOR Role created");
           return roleRepository.save(newUserRole);
         });
 
-        Optional<RoleEntity> warehouse = roleRepository.findByName(RoleType.WAREHOUSE_MANAGER);
-
         RoleEntity warehouseRole = user.orElseGet(() -> {
-          RoleEntity newUserRole = RoleEntity.builder().name(RoleType.WAREHOUSE_MANAGER).description("창고 관리자")
+          RoleEntity newUserRole = RoleEntity.builder().name(RoleType.WAREHOUSE_MANAGER)
+              .description("창고 관리자")
               .build();
           log.info("✅ WAREHOUSE_MANAGER Role created");
           return roleRepository.save(newUserRole);
