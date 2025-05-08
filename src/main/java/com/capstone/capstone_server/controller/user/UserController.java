@@ -1,6 +1,8 @@
 package com.capstone.capstone_server.controller.user;
 
 
+import com.capstone.capstone_server.detail.CustomUserDetails;
+import com.capstone.capstone_server.dto.PasswordChanngeDTO;
 import com.capstone.capstone_server.dto.UserDTO;
 import com.capstone.capstone_server.entity.UserEntity;
 import com.capstone.capstone_server.mapper.UserMapper;
@@ -10,7 +12,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -72,5 +76,35 @@ public class UserController {
     return ResponseEntity.ok().body(responseDTO);
   }
 
+  // 비밀번호 변경 메서드
+  @Operation(
+      summary = "비밀번호 변경",
+      description = "유저 권한으로 본인의 비밀번호를 변경합니다."
+          + "필수 param: username, password"
+  )
+  @PostMapping("/changePw")
+  public ResponseEntity<?> changePw(@AuthenticationPrincipal CustomUserDetails details,
+      @RequestBody PasswordChanngeDTO passwordChanngeDTO) {
+    log.info("Change info user request: {}", passwordChanngeDTO);
+
+    userService.updatePw(passwordChanngeDTO, details.getPassword(), details.getUsername());
+
+    return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
+  }
+
+  @Operation(
+      summary = "유저 정보 변경",
+      description = "유저 권한으로 본인의 유저정보를 변경합니다. 비밀번호 제외."
+          + "필수 param: username, password, name, phoneNumber, email, hospital"
+  )
+  @PutMapping("/changeUs")
+  public ResponseEntity<UserDTO> changeInfo(@AuthenticationPrincipal CustomUserDetails details,
+      @RequestBody UserDTO userDTO) {
+    log.info("Change info user request: {}", userDTO);
+
+    UserDTO response = userService.updateUser(userDTO, details.getPassword());
+
+    return ResponseEntity.ok().body(response);
+  }
 
 }

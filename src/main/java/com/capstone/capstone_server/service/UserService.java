@@ -1,6 +1,7 @@
 package com.capstone.capstone_server.service;
 
 
+import com.capstone.capstone_server.dto.PasswordChanngeDTO;
 import com.capstone.capstone_server.dto.UserDTO;
 import com.capstone.capstone_server.entity.HospitalEntity;
 import com.capstone.capstone_server.entity.RoleEntity;
@@ -95,6 +96,51 @@ public class UserService {
     }
 
     return userEntity;
+  }
+
+  // 유저의 정보를 변경하는 함수.
+  public UserDTO updateUser(UserDTO userDTO, String encryptedPassword) {
+    if (userDTO == null) {
+      throw new IllegalArgumentException("userDTO is null");
+    }
+
+    if (!passwordEncoder.matches(encryptedPassword, userDTO.getPassword())) {
+      throw new IllegalArgumentException("Password is wrong");
+    }
+    Optional<UserEntity> optionalUserEntity = userRepository.findByUsername(userDTO.getUsername());
+    if (optionalUserEntity.isEmpty()) {
+      log.warn("User with id {} does not exist", userDTO.getUsername());
+    }
+
+    UserEntity userEntity = optionalUserEntity.get();
+    userEntity.setEmail(userDTO.getEmail());
+    userEntity.setName(userDTO.getName());
+    userEntity.setPhoneNumber(String.valueOf(userDTO.getPhoneNumber()));
+    userEntity.setHospital(hospitalService.getHospitalById(userDTO.getHospitalId()));
+
+    return userMapper.EntityToDTO(userRepository.save(userEntity));
+  }
+
+  // 유저의 비밀번호를 변경하는 함수
+  public void updatePw(PasswordChanngeDTO passwordChanngeDTO, String encryptedPassword,
+      String username) {
+    if (passwordChanngeDTO == null) {
+      throw new IllegalArgumentException("passwordChanngeDTO is null");
+    }
+
+    // 입력받은 비밀번호와 토큰 비밀번호가 일치하지 않는경우
+    if (!passwordEncoder.matches(encryptedPassword, passwordChanngeDTO.getCurrentPassword())) {
+      throw new IllegalArgumentException("Password is wrong");
+    }
+    Optional<UserEntity> optionalUserEntity = userRepository.findByUsername(username);
+    if (optionalUserEntity.isEmpty()) {
+      log.warn("User with id {} does not exist", username);
+    }
+
+    UserEntity userEntity = optionalUserEntity.get();
+    userEntity.setPassword(passwordChanngeDTO.getNewPassword());
+    userRepository.save(userEntity);
+
   }
 
   // 유저의 권한과 활성화를 설정하는 함수
