@@ -47,7 +47,7 @@ public class UserEntity {
 
   private String email; // 사용자 이메일
 
-  private String profession; // 사용자 직업(의사, 간호사 등)
+  private String fcmToken; // fcm 토큰
 
   @ManyToOne
   @JoinColumn

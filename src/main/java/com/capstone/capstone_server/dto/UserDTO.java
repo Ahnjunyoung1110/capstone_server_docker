@@ -14,10 +14,10 @@ import lombok.NoArgsConstructor;
 public class UserDTO {
 
   private String token;
+  private String fcmToken;
   private String username;
   private String password;
   private String uuid;
-  private String profession;
   private String email;
   private String phoneNumber;
   private String name;

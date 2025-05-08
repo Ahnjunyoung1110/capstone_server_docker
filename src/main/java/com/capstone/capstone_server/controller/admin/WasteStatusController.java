@@ -35,6 +35,7 @@ public class WasteStatusController {
   @Operation(
       summary = "폐기물 상태 리턴 ",
       description = "어드민 권한으로 현재 DB에 저장되어있는 폐기물의 상태를 리턴합니다."
+
   )
   @GetMapping
   public ResponseEntity<List<WasteStatusDTO>> getWasteStatus() {
@@ -44,6 +45,8 @@ public class WasteStatusController {
   @Operation(
       summary = "폐기물 상태 생성 ",
       description = "어드민 권한으로 새로운 폐기물 상태를 생성합니다."
+          + "필수 param: 없음, statusLevel은 자동으로 조정"
+          + "옵션 param: description"
   )
   @PostMapping("/create")
   public ResponseEntity<List<WasteStatusDTO>> createWasteStatus(
@@ -56,6 +59,8 @@ public class WasteStatusController {
   @Operation(
       summary = "폐기물 상태 업데이트 ",
       description = "어드민 권한으로 기존 폐기물 상태를 업데이트 합니다."
+          + "필수 param: id, 단 주어진 리스트 순서에 따라 statusLevel을 조정함"
+          + "옵션 param: description"
   )
   @PutMapping("/update")
   public ResponseEntity<List<WasteStatusDTO>> updateWasteStatus(

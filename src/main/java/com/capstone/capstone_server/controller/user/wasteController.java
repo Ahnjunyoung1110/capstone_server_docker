@@ -113,8 +113,6 @@ public class wasteController {
   @GetMapping("/getAllWasteHs")
   public ResponseEntity<List<WasteDTO>> getAllWasteById(
       @AuthenticationPrincipal CustomUserDetails details,
-      @RequestParam(required = false) Boolean valid, // 활성화된 폐기물
-      @RequestParam(required = false) Boolean needUser, // 유저가 속한 병원만을 리턴하는가
       @RequestParam(required = false) String wasteId, // 폐기물 id
       @RequestParam(required = false) Integer beaconId, // 비컨 id
       @RequestParam(required = false) Integer wasteTypeId, // 폐기물 종류 Id
@@ -123,15 +121,15 @@ public class wasteController {
       @RequestParam(required = false) Date startDate, // 생성일 검색
       @RequestParam(required = false) Date endDate // 생성일 검색
   ) {
-    log.info("getAllWasteByEverything request valid: {}, need hospital: {}, wasteId: {}, "
+    log.info("getAllWasteByEverything request wasteId: {}, "
             + "beaconId: {}, wasteTypeId: {}, wasteStatusId: {}, storageId: {}, "
             + "Date: {}~{}",
-        valid, needUser, wasteId, beaconId, wasteTypeId,
+        wasteId, beaconId, wasteTypeId,
         wasteStatusId, storageId, startDate, endDate);
 
-    String uuid = Boolean.TRUE.equals(needUser) ? details.getUsername() : null;
+    String uuid = details.getUsername();
 
-    List<WasteEntity> wasteEntities = wasteService.getAllWasteEverything(valid, uuid, wasteId,
+    List<WasteEntity> wasteEntities = wasteService.getAllWasteEverything(true, uuid, wasteId,
         beaconId, wasteTypeId, wasteStatusId, storageId, startDate, endDate);
     List<WasteDTO> wasteDTOs = wasteMapper.toDTOList(wasteEntities);
     return ResponseEntity.ok().body(wasteDTOs);

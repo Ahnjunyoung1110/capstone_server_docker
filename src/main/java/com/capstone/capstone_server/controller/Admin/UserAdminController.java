@@ -32,6 +32,7 @@ public class UserAdminController {
   @Operation(
       summary = "권한 업데이트 ",
       description = "어드민 권한으로 유저의 권한을 업데이트 합니다. user의 roles를 받습니다."
+          + "필수 param: hospitalName, Set<RoleType> roles;"
   )
   @PatchMapping("/{id}")
   public ResponseEntity<UserDTO> validUser(@PathVariable String id, @RequestBody UserDTO user) {

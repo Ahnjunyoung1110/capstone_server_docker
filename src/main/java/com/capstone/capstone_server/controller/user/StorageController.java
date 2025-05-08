@@ -1,6 +1,7 @@
 package com.capstone.capstone_server.controller.user;
 
 
+import com.capstone.capstone_server.detail.CustomUserDetails;
 import com.capstone.capstone_server.dto.StorageDTO;
 import com.capstone.capstone_server.service.StorageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -8,6 +9,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,13 +55,15 @@ public class StorageController {
   @Operation(
       summary = "창고 생성",
       description = "유저 권한으로 창고를 생성합니다."
+          + "옵션 param: storageName, beacon"
   )
   @PostMapping("/createSr")
-  public ResponseEntity<StorageDTO> createStorage(@RequestBody StorageDTO storageDTO) {
+  public ResponseEntity<StorageDTO> createStorage(
+      @AuthenticationPrincipal CustomUserDetails details, @RequestBody StorageDTO storageDTO) {
     log.info("createStorageController");
 
     // 저장
-    StorageDTO createdStorageDTO = storageService.createStorage(storageDTO);
+    StorageDTO createdStorageDTO = storageService.createStorage(details.getUsername(), storageDTO);
     log.info("Create storage {}", createdStorageDTO);
 
     return ResponseEntity.ok(createdStorageDTO);
@@ -69,6 +73,8 @@ public class StorageController {
   @Operation(
       summary = "창고 업데이트",
       description = "유저 권한으로 창고를 업데이트합니다."
+          + "필수 param: id, "
+          + "옵션 param: storageName, beacon"
   )
   @PutMapping("/updateSr")
   public ResponseEntity<StorageDTO> updateStorage(@RequestBody StorageDTO storageDTO) {

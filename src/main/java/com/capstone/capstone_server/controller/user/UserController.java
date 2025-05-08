@@ -25,7 +25,8 @@ public class UserController {
   private final UserMapper userMapper;
 
   @Autowired
-  public UserController(TokenProvider tokenProvider, UserService userService, UserMapper userMapper) {
+  public UserController(TokenProvider tokenProvider, UserService userService,
+      UserMapper userMapper) {
     this.tokenProvider = tokenProvider;
     this.userService = userService;
     this.userMapper = userMapper;
@@ -35,6 +36,8 @@ public class UserController {
   @Operation(
       summary = "회원가입",
       description = "유저 권한으로 회원가입을 신청합니다."
+          + "필수 param: username, password, "
+          + "옵션 param: name, phoneNumber, email, hospital"
   )
   @PostMapping("/signup")
   public ResponseEntity<UserDTO> signUp(@RequestBody UserDTO userDTO) {
@@ -49,6 +52,7 @@ public class UserController {
   @Operation(
       summary = "로그인",
       description = "유저 권한으로 로그인 후 토큰을 받아갑니다."
+          + "필수 param: username, password, "
   )
   @PostMapping("/signin")
   public ResponseEntity<UserDTO> signIn(@RequestBody UserDTO userDTO) {

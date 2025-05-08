@@ -87,7 +87,6 @@ public class DatabaseSeeder implements CommandLineRunner {
               .name("ADMIN")
               .email("example@naver.com")
               .hospital(null)
-              .profession(null)
               .createdAt(new Date())
               .updatedAt(new Date())
               .valid(true)

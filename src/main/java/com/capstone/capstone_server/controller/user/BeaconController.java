@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -38,8 +37,8 @@ public class BeaconController {
       description = "유저 권한으로 유저가 속한 병원의 비콘을 반환 합니다."
   )
   @GetMapping
-  public ResponseEntity<List<BeaconDTO>> getAllBeacons(@AuthenticationPrincipal CustomUserDetails user)
-   {
+  public ResponseEntity<List<BeaconDTO>> getAllBeacons(
+      @AuthenticationPrincipal CustomUserDetails user) {
     log.info("getAllBeacons Controller");
 
     return ResponseEntity.ok(beaconService.getAllBeacons(user.getUsername()));
@@ -59,6 +58,8 @@ public class BeaconController {
   @Operation(
       summary = "비콘 생성",
       description = "유저 권한으로 신규 비콘을 생성 합니다."
+          + "필수 param: deviceAddress(맥주소 또는 uuid), "
+          + "옵션 param: location, label, hospital"
   )
   @PostMapping("/createBc")
   public ResponseEntity<BeaconDTO> createBeacon(@RequestBody BeaconDTO beaconDTO) {
@@ -69,6 +70,7 @@ public class BeaconController {
   @Operation(
       summary = "비콘 업데이트",
       description = "유저 권한으로 비콘을 업데이트 합니다."
+          + "필수 param: id, deviceAddress"
   )
   @PutMapping("/updateBc/{id}")
   public ResponseEntity<BeaconDTO> updateBeacon(@PathVariable("id") int id,

@@ -1,6 +1,5 @@
 package com.capstone.capstone_server.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +16,7 @@ public class StorageDTO {
 
   private String storageName;
 
-  private Integer hospitalId;
+  private Integer hospital;
 
-  // 비콘 추가 예정
+  private Integer beacon;
 }

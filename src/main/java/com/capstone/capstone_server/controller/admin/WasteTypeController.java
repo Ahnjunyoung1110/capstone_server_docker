@@ -52,6 +52,7 @@ public class WasteTypeController {
   @Operation(
       summary = "폐기물 종류 생성 ",
       description = "어드민 권한으로 새로운 폐기물 종류를 생성 합니다."
+          + "필수 param: typeName(명칭), period(보관기일)"
   )
   @PostMapping("/create")
   public ResponseEntity<WasteTypeDTO> CreateWasteType(@RequestBody WasteTypeDTO wasteTypeDTO) {
@@ -63,6 +64,7 @@ public class WasteTypeController {
   @Operation(
       summary = "폐기물 종류 업데이트 ",
       description = "어드민 권한으로 기존 폐기물 종류 업데이트 합니다."
+          + "필수 param: id"
   )
   @PutMapping("/update/{id}")
   public ResponseEntity<WasteTypeDTO> UpdateWasteType(@PathVariable int id,

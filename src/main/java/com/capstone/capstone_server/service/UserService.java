@@ -163,7 +163,6 @@ public class UserService {
         .username(userDTO.getUsername())
         .password(userDTO.getPassword())
         .email(userDTO.getEmail())
-        .profession(userDTO.getProfession())
         .phoneNumber(userDTO.getPhoneNumber())
         .name(userDTO.getName())
         .hospital(hospital)

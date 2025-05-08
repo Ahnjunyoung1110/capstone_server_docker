@@ -48,6 +48,7 @@ public class WasteLogEntity {
   @Temporal(TemporalType.TIMESTAMP)
   private Date updatedAt;
 
+  @Builder.Default
   private boolean valid = true;
 
   // 최초 생성시 실행

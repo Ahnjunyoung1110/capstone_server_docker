@@ -38,6 +38,8 @@ public class HospitalAdminController {
   @Operation(
       summary = "병원 추가",
       description = "어드민 권한으로 병원을 추가합니다."
+          + "필수 param: hospitalName, "
+          + "옵션 param: hospitalCall"
   )
   @PostMapping("/addHs")
   public ResponseEntity<HospitalDTO> addHospital(@RequestBody HospitalDTO hospitalDTO) {
@@ -59,6 +61,8 @@ public class HospitalAdminController {
   @Operation(
       summary = "병원 업데이트 ",
       description = "어드민 권한으로 병원을 업데이트 합니다."
+          + "필수 param: hospitalName, "
+          + "옵션 param: hospitalCall"
   )
   @PutMapping("/updateHs")
   public ResponseEntity<HospitalDTO> updateHospital(@RequestBody HospitalDTO hospitalDTO) {
