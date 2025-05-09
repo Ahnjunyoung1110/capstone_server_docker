@@ -5,6 +5,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 application.properties
+capstonealram-firebase-adminsdk-fbsvc-7c50ae5a8a.json
 
 ### STS ###
 .apt_generated
