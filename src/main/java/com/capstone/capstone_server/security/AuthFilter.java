@@ -29,6 +29,14 @@ public class AuthFilter extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
       FilterChain filterChain)
       throws ServletException, IOException {
+
+    String path = request.getRequestURI();
+    if ("/fcm/token".equals(path)) {
+      // FCM 토큰 등록은 인증 없이 통과시킴
+      filterChain.doFilter(request, response);
+      return;
+    }
+
     logger.info("Filtering request");
 
     // 토큰 가져오기
