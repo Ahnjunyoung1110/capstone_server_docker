@@ -26,8 +26,6 @@ import org.hibernate.annotations.GenericGenerator;
 public class WasteEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO, generator = "waste-id-generator")
-  @GenericGenerator(name = "waste-id-generator", strategy = "com.capstone.capstone_server.service.waste.WasteIdGenerator")
   private String id;
 
   @ManyToOne

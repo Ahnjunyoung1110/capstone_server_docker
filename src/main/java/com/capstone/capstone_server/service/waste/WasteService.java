@@ -14,6 +14,7 @@ import com.capstone.capstone_server.service.BeaconService;
 import com.capstone.capstone_server.service.HospitalService;
 import com.capstone.capstone_server.service.StorageService;
 import com.capstone.capstone_server.service.UserService;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -87,13 +88,51 @@ public class WasteService {
   // 폐기물 생성
   public WasteDTO createWaste(WasteDTO wasteDTO, String uuid) {
     WasteEntity wasteEntity = dtoToEntity(wasteDTO);
+    wasteEntity.setId(generateNextId());
     log.info("create waste : {}", wasteEntity);
+
+    if (wasteEntity.getBeacon().isUsed()) {
+      log.info("beacon is used");
+      throw new IllegalArgumentException("beacon is used");
+    }
+    wasteEntity.getBeacon().setUsed(Boolean.TRUE);
     WasteEntity responseEntity = wasteRepository.save(wasteEntity);
     UserEntity userEntity = userService.findByUuid(uuid);
     WasteStatusEntity wasteStatus = wasteStatusService.getWasteStatusEntity(
         wasteDTO.getWasteStatusId());
 
     wasteLogService.createWasteLog(wasteEntity, wasteStatus, userEntity, null);
+
+    return wasteMapper.toWasteDTO(responseEntity);
+  }
+
+  private String generateNextId() {
+    String today = new SimpleDateFormat("yyyyMMdd").format(new Date());
+    String prefix = today;
+
+    String maxId = wasteRepository.findMaxIdLike(prefix + "%");
+    int next = 1;
+    if (maxId != null) {
+      String numberPart = maxId.substring(8);
+      next = Integer.parseInt(numberPart) + 1;
+    }
+    return prefix + String.format("%03d", next);
+  }
+
+
+  // 폐기물의 비콘을 제거하는 함수
+  public WasteDTO eliminateBeacon(String wasteId) {
+    log.info("eliminateBeacon");
+    WasteEntity waste = wasteRepository.findById(wasteId).orElse(null);
+    if (waste == null) {
+      log.warn("No waste found with id {}", wasteId);
+      throw new IllegalArgumentException("No waste found with id " + wasteId);
+    }
+
+    waste.getBeacon().setUsed(Boolean.FALSE);
+    waste.setBeacon(null);
+
+    WasteEntity responseEntity = wasteRepository.save(waste);
 
     return wasteMapper.toWasteDTO(responseEntity);
   }
@@ -145,7 +184,10 @@ public class WasteService {
     WasteStatusEntity wasteStatus = wasteStatusService.transportTrue(waste.getWasteStatus(), +1);
 
     log.info("To : {}", wasteStatus);
+    BeaconEntity beacon = waste.getBeacon();
+    beacon.setUsed(!wasteStatusService.checkFinal(wasteStatus));
 
+    waste.setBeacon(beacon);
     waste.setWasteStatus(wasteStatus);
     wasteRepository.save(waste);
 

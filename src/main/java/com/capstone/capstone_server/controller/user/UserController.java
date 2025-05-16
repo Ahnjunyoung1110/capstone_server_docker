@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -102,9 +103,23 @@ public class UserController {
       @RequestBody UserDTO userDTO) {
     log.info("Change info user request: {}", userDTO);
 
-    UserDTO response = userService.updateUser(userDTO, details.getPassword());
+    UserDTO response = userService.updateUser(userDTO, details.getUsername());
 
     return ResponseEntity.ok().body(response);
+  }
+
+  @Operation(
+      summary = "로그아웃",
+      description = "로그아웃 합니다."
+  )
+  @PutMapping("/logOut/{uuid}")
+  public ResponseEntity<?> logOut(@AuthenticationPrincipal CustomUserDetails details,
+      @PathVariable String uuid) {
+    log.info("Logout user request: {}", uuid);
+
+    userService.logOut(details.getUsername(), uuid);
+
+    return ResponseEntity.ok().build();
   }
 
 }

@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -92,6 +93,7 @@ public class wasteController {
     List<WasteLogDTO> responseLogDTO = wasteLogService.getWasteLog(id);
     WasteAllDTO responseDTO = WasteAllDTO.builder()
         .id(responseWasteDTO.getId())
+        .beacon(responseWasteDTO.getBeaconId())
         .hospital(responseWasteDTO.getHospitalId())
         .storage(responseWasteDTO.getStorageId())
         .wasteType(responseWasteDTO.getWasteTypeId())
@@ -117,8 +119,10 @@ public class wasteController {
       @RequestParam(required = false) Integer wasteTypeId, // 폐기물 종류 Id
       @RequestParam(required = false) Integer wasteStatusId, // 폐기물 상태 Id
       @RequestParam(required = false) Integer storageId, // 창고 Id
-      @RequestParam(required = false) Date startDate, // 생성일 검색
-      @RequestParam(required = false) Date endDate // 생성일 검색
+      @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+      // 생성일 검색
+      @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate
+      // 생성일 검색
   ) {
     log.info("getAllWasteByEverything request wasteId: {}, "
             + "beaconId: {}, wasteTypeId: {}, wasteStatusId: {}, storageId: {}, "
@@ -176,6 +180,18 @@ public class wasteController {
       @RequestParam(required = false) String description) {
     log.info("transportStatus request {}", id);
     WasteDTO wasteDTO = wasteService.toNextStatus(details.getUsername(), id, description);
+    return ResponseEntity.ok().body(wasteDTO);
+  }
+
+  // 폐기물의 비콘을 해제하고 비콘의 used를 false로 만드는 함수
+  @Operation(
+      summary = "폐기물 비콘 변경",
+      description = "폐기물의 비콘을 제거하고 해당 비콘의 used 상태를 false로 만든다."
+  )
+  @PutMapping("/eliminateBc/{id}")
+  public ResponseEntity<WasteDTO> eliminnateBeacon(@PathVariable String id) {
+    log.info("eliminate beacon controller {}", id);
+    WasteDTO wasteDTO = wasteService.eliminateBeacon(id);
     return ResponseEntity.ok().body(wasteDTO);
   }
 

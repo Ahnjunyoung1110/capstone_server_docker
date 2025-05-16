@@ -46,6 +46,13 @@ public class WasteStatusService {
     return wasteStatusRepository.findByStatusLevel(wasteStatusEntity.getStatusLevel() + count);
   }
 
+
+  // 해당 Waste가 마지막 WasteStatus인지 확인
+  public boolean checkFinal(WasteStatusEntity wasteStatusEntity) {
+
+    return wasteStatusRepository.count() == wasteStatusEntity.getStatusLevel();
+  }
+
   // 신규 생성
   public List<WasteStatusDTO> createWasteStatus(WasteStatusDTO wasteStatusDTO) {
     if (wasteStatusDTO == null) {

@@ -48,9 +48,13 @@ public class BeaconService {
   // 위 함수와 동일하나 Entity로 리턴
   public BeaconEntity getBeaconEntityById(int id) {
     BeaconEntity entity = beaconReposiroty.findById(id).orElse(null);
-    if (entity == null || entity.isUsed()) {
+    if (entity == null) {
       log.info("Beacon cannot find or use");
       throw new IllegalArgumentException("Beacon not found");
+    }
+    if (entity.isUsed()) {
+      log.info("Beacon is used");
+      throw new IllegalArgumentException("Beacon is used");
     }
 
     return entity;
@@ -65,6 +69,7 @@ public class BeaconService {
 
     return beaconMapper.toBeaconDTO(createdEntity);
   }
+
 
   // 기존 비컨 업데이트 메서드
   public BeaconDTO updateBeacon(int id, BeaconDTO beaconDTO) {

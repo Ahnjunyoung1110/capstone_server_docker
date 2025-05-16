@@ -56,6 +56,7 @@ public class WasteTypeController {
   )
   @PostMapping("/create")
   public ResponseEntity<WasteTypeDTO> CreateWasteType(@RequestBody WasteTypeDTO wasteTypeDTO) {
+    log.info("Create WasteType : {}", wasteTypeDTO);
     WasteTypeDTO response = wasteTypeService.createWasteType(wasteTypeDTO);
 
     return ResponseEntity.ok(response);
@@ -69,6 +70,7 @@ public class WasteTypeController {
   @PutMapping("/update/{id}")
   public ResponseEntity<WasteTypeDTO> UpdateWasteType(@PathVariable int id,
       @RequestBody WasteTypeDTO wasteTypeDTO) {
+    log.info("Update WasteType : {}", wasteTypeDTO);
     WasteTypeDTO response = wasteTypeService.updateWasteType(wasteTypeDTO, id);
     return ResponseEntity.ok(response);
   }
@@ -80,6 +82,7 @@ public class WasteTypeController {
   )
   @DeleteMapping("/delete/{id}")
   public ResponseEntity<?> DeleteWasteType(@PathVariable int id) {
+    log.info("Delete WasteType : {}", id);
     wasteTypeService.deleteWasteType(id);
     return ResponseEntity.ok().build();
   }

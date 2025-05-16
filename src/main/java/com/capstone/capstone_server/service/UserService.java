@@ -60,7 +60,6 @@ public class UserService {
 
     String EncryptedPassword = passwordEncoder.encode(userEntity.getPassword());
     userEntity.setPassword(EncryptedPassword);
-
     UserEntity savedUserEntity = userRepository.save(userEntity);
     return userMapper.EntityToDTO(savedUserEntity);
   }
@@ -99,11 +98,12 @@ public class UserService {
   }
 
   // 유저의 정보를 변경하는 함수.
-  public UserDTO updateUser(UserDTO userDTO, String encryptedPassword) {
+  public UserDTO updateUser(UserDTO userDTO, String uuid) {
     if (userDTO == null) {
       throw new IllegalArgumentException("userDTO is null");
     }
 
+    String encryptedPassword = findByUuid(uuid).getPassword();
     if (!passwordEncoder.matches(encryptedPassword, userDTO.getPassword())) {
       throw new IllegalArgumentException("Password is wrong");
     }
@@ -176,6 +176,22 @@ public class UserService {
     return userMapper.EntityToDTO(userRepository.save(findUser));
   }
 
+  // 로그아웃하는 함수
+  public void logOut(String uuid, String responseUuid){
+    if(uuid == null || responseUuid == null) {
+      throw new IllegalArgumentException("userEntity is null");
+    }
+    if(uuid.equals(responseUuid)) {
+      UserEntity userEntity = userRepository.findById(uuid).orElse(null);
+      if(userEntity != null) {
+        userEntity.setFcmToken(null);
+        userRepository.save(userEntity);
+      }
+    }
+    log.info("User with uuid {} has been logged out", uuid);
+
+  }
+
   // primaryRole 지정을 위한 함수
   private RoleType selectPrimaryRole(Set<RoleEntity> roles) {
     Set<RoleType> roleTypes = roles.stream()
@@ -193,6 +209,8 @@ public class UserService {
     }
     return RoleType.USER;
   }
+
+
 
 
   // DTO 를 Entity로 변환하는 메서드

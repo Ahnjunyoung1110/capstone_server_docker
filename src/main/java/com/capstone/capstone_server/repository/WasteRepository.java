@@ -19,14 +19,14 @@ public interface WasteRepository extends JpaRepository<WasteEntity, String> {
 
   // 상세 검색용 쿼리
   @Query("Select w From WasteEntity w Where  (:valid IS NULL OR w.valid = :valid) " +
-      "and (:wasteId IS NULL OR w.id = :wasteId) " +
+      "and (:wasteId IS NULL OR w.id LIKE CONCAT(:wasteId, '%')) " +
       "and w.hospital.id = (Select u.hospital.id From UserEntity u where (:uuid IS NULL OR u.uuid = :uuid)) "
       +
       "and (:beaconId IS NULL OR w.beacon.id = :beaconId) " +
       "and (:wasteTypeId IS NULL OR w.wasteType.id = :wasteTypeId) " +
       "and (:wasteStatusId IS NULL OR w.wasteStatus.id = :wasteStatusId) " +
       "and (:storageId IS NULL OR w.storage.id = :storageId) " +
-      "and (:starteDate IS NULL OR w.createdAt >= :startDate)" +
+      "and (:startDate IS NULL OR w.createdAt >= :startDate)" +
       "and (:endDate IS NULL OR w.createdAt <= :endDate)"
   )
   List<WasteEntity> findWasteEntityEverything(@Param("valid") boolean valid,
@@ -34,7 +34,10 @@ public interface WasteRepository extends JpaRepository<WasteEntity, String> {
       @Param("uuid") String uuid,
       @Param("beaconId") Integer beaconId,
       @Param("wasteTypeId") Integer wasteTypeId, @Param("wasteStatusId") Integer wasteStatusId,
-      @Param("storageId") Integer storageId, @Param("starteDate") Date starteDate,
+      @Param("storageId") Integer storageId, @Param("startDate") Date startDate,
       @Param("endDate") Date endDate);
 
+
+  @Query("SELECT MAX(w.id) FROM WasteEntity w WHERE w.id LIKE :prefix")
+  String findMaxIdLike(@Param("prefix") String prefix);
 }

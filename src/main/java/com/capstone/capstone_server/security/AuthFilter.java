@@ -31,6 +31,13 @@ public class AuthFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
     logger.info("Filtering request");
 
+    // 토큰이 필요없는 경로에 대해서 패스
+    String path = request.getRequestURI();
+    if (path.startsWith("/auth/signup") ||path.startsWith("/auth/signin") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs") || path.equals("/hospital")) {
+      filterChain.doFilter(request, response);
+      return;
+    }
+
     // 토큰 가져오기
     String token = request.getHeader("Authorization");
 

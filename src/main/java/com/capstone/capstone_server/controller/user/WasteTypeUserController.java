@@ -7,6 +7,7 @@ import com.capstone.capstone_server.mapper.WasteTypeMapper;
 import com.capstone.capstone_server.service.waste.WasteTypeService;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("wsType")
+@Slf4j
 public class WasteTypeUserController {
 
   private final WasteTypeService wasteTypeService;
@@ -33,6 +35,7 @@ public class WasteTypeUserController {
   )
   @GetMapping()
   public ResponseEntity<List<WasteTypeDTO>> GetAll() {
+    log.info("GetAllWasteType");
     List<WasteTypeEntity> typeEntities = wasteTypeService.GetAllWasteTypes();
 
     List<WasteTypeDTO> typeDTO = wasteTypeMapper.toDTOList(typeEntities);
