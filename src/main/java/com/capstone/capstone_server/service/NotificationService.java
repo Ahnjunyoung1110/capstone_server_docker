@@ -1,5 +1,6 @@
 package com.capstone.capstone_server.service;
 
+import com.capstone.capstone_server.dto.NotificationResponseDTO;
 import com.capstone.capstone_server.entity.NotificationEntity;
 import com.capstone.capstone_server.entity.UserEntity;
 import com.capstone.capstone_server.repository.NotificationRepository;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -21,7 +23,7 @@ public class NotificationService {
     private final UserRepository userRepository;
     private final NotificationRepository notificationRepository;
 
-    public void sendToHospitalUsers(Long hospitalId, String title, String message) {
+    public void sendToHospitalUsers(Integer hospitalId, String title, String message) {
         List<UserEntity> users = userRepository.findByHospitalId(hospitalId);
 
         for (UserEntity user : users) {
@@ -55,5 +57,12 @@ public class NotificationService {
                 log.error("FCM 전송 실패 - userId: {}, token: {}", user.getUuid(), token, e);
             }
         }
+    }
+
+    public List<NotificationResponseDTO> getNotificationsForUser(String uuid) {
+        List<NotificationEntity> notifications = notificationRepository.findByUser_UuidOrderBySentAtDesc(uuid);
+        return notifications.stream()
+                .map(NotificationResponseDTO::from)
+                .collect(Collectors.toList());
     }
 }
