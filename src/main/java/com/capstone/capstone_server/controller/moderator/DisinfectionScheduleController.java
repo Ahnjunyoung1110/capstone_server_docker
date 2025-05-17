@@ -37,9 +37,9 @@ public class DisinfectionScheduleController {
 
   @GetMapping
   public ResponseEntity<List<DisinfectionScheduleDTO>> disinfectionSchedule(
-      @AuthenticationPrincipal CustomUserDetails details, @RequestParam
-      @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDateTime start,
-      @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDateTime end) {
+      @AuthenticationPrincipal CustomUserDetails details, @RequestParam(required = false)
+      @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime start,
+      @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime end) {
     List<DisinfectionScheduleDTO> response = disinfectionScheduleModeratorService.getDisinfectionSchedule(
         details.getUsername(), start, end);
     return ResponseEntity.ok().body(response);
@@ -64,16 +64,19 @@ public class DisinfectionScheduleController {
   }
 
   @DeleteMapping("/deleteDi/{id}")
-  public ResponseEntity<?> deleteDisinfection(@AuthenticationPrincipal CustomUserDetails details,@PathVariable Integer id) {
+  public ResponseEntity<?> deleteDisinfection(@AuthenticationPrincipal CustomUserDetails details,
+      @PathVariable Integer id) {
     disinfectionScheduleModeratorService.deleteDisinfectionSchedule(details.getUsername(), id);
     return ResponseEntity.ok().build();
   }
 
   // 다음 상태로 변경
   @PutMapping("/toNextDi/{id}")
-  public ResponseEntity<DisinfectionScheduleDTO> nextDi(@PathVariable Integer id,@AuthenticationPrincipal CustomUserDetails details, @RequestBody
+  public ResponseEntity<DisinfectionScheduleDTO> nextDi(@PathVariable Integer id,
+      @AuthenticationPrincipal CustomUserDetails details, @RequestBody
       DisinfectionStatus status) {
-    DisinfectionScheduleDTO response = disinfectionScheduleModeratorService.nextDisinfectionSchedule(details.getUsername(), id, status);
+    DisinfectionScheduleDTO response = disinfectionScheduleModeratorService.nextDisinfectionSchedule(
+        details.getUsername(), id, status);
     return ResponseEntity.ok().body(response);
   }
 }

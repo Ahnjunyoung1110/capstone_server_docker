@@ -101,7 +101,7 @@ public class WasteService {
     WasteStatusEntity wasteStatus = wasteStatusService.getWasteStatusEntity(
         wasteDTO.getWasteStatusId());
 
-    wasteLogService.createWasteLog(wasteEntity, wasteStatus, userEntity, null);
+    wasteLogService.createWasteLog(wasteEntity, wasteStatus, userEntity, wasteEntity.getDescription());
 
     return wasteMapper.toWasteDTO(responseEntity);
   }

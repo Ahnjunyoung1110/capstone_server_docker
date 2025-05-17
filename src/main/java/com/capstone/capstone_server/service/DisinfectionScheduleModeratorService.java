@@ -50,6 +50,7 @@ public class DisinfectionScheduleModeratorService {
     log.info("createDisinfectionSchedule {}", disinfectionScheduleDTO);
     DisinfectionScheduleEntity disinfectionScheduleEntity = checkCollectId(uuid,
         disinfectionScheduleDTO);
+    disinfectionScheduleEntity.setStatus(DisinfectionStatus.SCHEDULED);
     DisinfectionScheduleEntity savedEntity = disinfectionScheduleRepository.save(
         disinfectionScheduleEntity);
 

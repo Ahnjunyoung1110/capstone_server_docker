@@ -15,6 +15,6 @@ public class SectorDTO {
   private Integer id;
   private String name;
   private Integer hospital;
-  private Date createAt;
-  private Date updateAt;
+  private Date createdAt;
+  private Date updatedAt;
 }

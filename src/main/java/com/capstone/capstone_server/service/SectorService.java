@@ -40,6 +40,10 @@ public class SectorService {
     log.info("Create sector {}", sectorDTO);
 
     HospitalEntity hospitalEntity = hospitalService.findHospitalByUuid(Uuid);
+    if(!sectorDTO.getHospital().equals(hospitalEntity.getId())) {
+      log.warn("Wrong hospital id {}", sectorDTO.getHospital());
+      throw new RuntimeException("Wrong hospital id");
+    }
     SectorEntity sectorEntity = SectorEntity.builder()
         .name(sectorDTO.getName())
         .hospital(hospitalEntity)
