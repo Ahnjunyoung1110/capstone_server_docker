@@ -16,6 +16,5 @@ public class WasteTypeDTO {
   private Integer id;
   private String typeName;
   private Integer period;
-  private boolean active;
 
 }

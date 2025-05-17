@@ -28,17 +28,8 @@ public class BeaconEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
-  @Column(nullable = false)
-  private String uuid;
-
   @Column(nullable = false, unique = true)
   private String deviceAddress;
-
-  @Column(nullable = false)
-  private Integer major;
-
-  @Column(nullable = false)
-  private Integer minor;
 
   private String location;
 
@@ -48,7 +39,7 @@ public class BeaconEntity {
   private HospitalEntity hospital;
 
   @Builder.Default
-  private boolean isUsed = false;
+  private boolean used = false;
 
   @Temporal(TemporalType.TIMESTAMP)
   private Date createdAt;

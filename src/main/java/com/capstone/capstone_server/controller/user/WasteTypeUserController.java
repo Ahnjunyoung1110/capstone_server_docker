@@ -1,42 +1,45 @@
-package com.capstone.capstone_server.controller.Admin;
+package com.capstone.capstone_server.controller.user;
 
 
 import com.capstone.capstone_server.dto.WasteTypeDTO;
 import com.capstone.capstone_server.entity.WasteTypeEntity;
 import com.capstone.capstone_server.mapper.WasteTypeMapper;
-import com.capstone.capstone_server.service.Waste.WasteTypeService;
+import com.capstone.capstone_server.service.waste.WasteTypeService;
+import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("admin/wsType")
 @RestController
+@RequestMapping("wsType")
 @Slf4j
-@PreAuthorize("hasRole('ADMIN')")
-public class WasteTypeController {
+public class WasteTypeUserController {
 
   private final WasteTypeService wasteTypeService;
   private final WasteTypeMapper wasteTypeMapper;
 
   @Autowired
-  public WasteTypeController(WasteTypeService wasteTypeService, WasteTypeMapper wasteTypeMapper) {
+  public WasteTypeUserController(WasteTypeService wasteTypeService,
+      WasteTypeMapper wasteTypeMapper) {
     this.wasteTypeService = wasteTypeService;
     this.wasteTypeMapper = wasteTypeMapper;
   }
 
-
+  @Operation(
+      summary = "폐기물 종류 리턴",
+      description = "유저 권한으로 폐기물의 종류를 받아옵니다."
+  )
   @GetMapping()
-  public ResponseEntity<?> GetAll() {
+  public ResponseEntity<List<WasteTypeDTO>> GetAll() {
+    log.info("GetAllWasteType");
     List<WasteTypeEntity> typeEntities = wasteTypeService.GetAllWasteTypes();
 
     List<WasteTypeDTO> typeDTO = wasteTypeMapper.toDTOList(typeEntities);
 
     return ResponseEntity.ok(typeDTO);
   }
-
 }

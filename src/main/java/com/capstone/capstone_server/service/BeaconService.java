@@ -26,9 +26,10 @@ public class BeaconService {
     this.hospitalService = hospitalService;
   }
 
-  // 전체 비컨 조회 메서드
-  public List<BeaconDTO> getAllBeacons() {
-    List<BeaconEntity> entities = beaconReposiroty.findAll();
+  // 소속 병원 전체 비컨 조회 메서드
+  public List<BeaconDTO> getAllBeacons(String uuid) {
+    HospitalEntity findhospital = hospitalService.findHospitalByUuid(uuid);
+    List<BeaconEntity> entities = beaconReposiroty.findAllByHospitalId(findhospital.getId());
 
     return beaconMapper.toBeaconDTOList(entities);
   }
@@ -47,12 +48,22 @@ public class BeaconService {
   // 위 함수와 동일하나 Entity로 리턴
   public BeaconEntity getBeaconEntityById(int id) {
     BeaconEntity entity = beaconReposiroty.findById(id).orElse(null);
-    if (entity == null || entity.isUsed()) {
+    if (entity == null) {
       log.info("Beacon cannot find or use");
       throw new IllegalArgumentException("Beacon not found");
     }
+    if (entity.isUsed()) {
+      log.info("Beacon is used");
+      throw new IllegalArgumentException("Beacon is used");
+    }
 
     return entity;
+  }
+
+  // Beacon의 Mac주소로 BeaconEntity를 리턴
+  public List<BeaconEntity> getAllBeaconsByMacAddress(List<String> macAddresses) {
+    return beaconReposiroty.findAllByDeviceAddressInAndValidIsTrue(macAddresses);
+
   }
 
   // 신규 비컨 추가 메서드
@@ -64,6 +75,7 @@ public class BeaconService {
 
     return beaconMapper.toBeaconDTO(createdEntity);
   }
+
 
   // 기존 비컨 업데이트 메서드
   public BeaconDTO updateBeacon(int id, BeaconDTO beaconDTO) {
@@ -79,12 +91,10 @@ public class BeaconService {
     }
 
     BeaconEntity getEntity = dToToEntitiy(beaconDTO);
-    entity.setMajor(getEntity.getMajor());
-    entity.setMinor(getEntity.getMinor());
     entity.setHospital(getEntity.getHospital());
     entity.setLabel(getEntity.getLabel());
     entity.setLocation(getEntity.getLocation());
-    entity.setUsed(entity.isUsed());
+    entity.setUsed(getEntity.isUsed());
     BeaconEntity updatedEntity = beaconReposiroty.save(entity);
 
     return beaconMapper.toBeaconDTO(updatedEntity);
@@ -117,12 +127,10 @@ public class BeaconService {
     return BeaconEntity.builder()
         .id(beaconDTO.getId())
         .deviceAddress(beaconDTO.getDeviceAddress())
-        .major(beaconDTO.getMajor())
-        .minor(beaconDTO.getMinor())
         .hospital(hospital)
         .location(beaconDTO.getLocation())
         .label(beaconDTO.getLabel())
-        .isUsed(beaconDTO.getIsUsed())
+        .used(beaconDTO.getUsed().equals(true))
         .build();
   }
 

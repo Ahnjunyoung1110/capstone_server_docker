@@ -28,9 +28,10 @@ public class SecurityConfig {
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
         .cors(Customizer.withDefaults())
-        .csrf(csrf -> csrf.disable())
+        .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(authz -> authz
-            .requestMatchers("/", "/auth/**").permitAll()
+            .requestMatchers("/", "/auth/**", "/swagger-ui/**", "/v3/api-docs/**",
+                "/swagger-ui.html", "/hospital").permitAll()
             .requestMatchers("/admin/**").hasRole("ADMIN")
             .anyRequest().authenticated())
         .sessionManagement(

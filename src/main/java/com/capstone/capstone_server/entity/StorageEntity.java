@@ -1,11 +1,13 @@
 package com.capstone.capstone_server.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Temporal;
@@ -34,6 +36,9 @@ public class StorageEntity {
   private String storageName;
 
   // 비콘
+  @OneToOne(cascade = CascadeType.PERSIST)
+  @JoinColumn
+  private BeaconEntity beacon;
 
   @Temporal(TemporalType.TIMESTAMP)
   private Date createdAt; // 계정 생성일
@@ -41,8 +46,6 @@ public class StorageEntity {
   @Temporal(TemporalType.TIMESTAMP)
   private Date updatedAt; // 마지막 업데이트 일
 
-  @Builder.Default
-  private boolean valid = true;
 
   // 최초 생성시 실행
   // createdAt 과 updatedAt을 현재시간으로 설정한다.

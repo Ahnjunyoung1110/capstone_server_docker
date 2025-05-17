@@ -2,6 +2,8 @@ package com.capstone.capstone_server.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -45,15 +47,11 @@ public class UserEntity {
 
   private String email; // 사용자 이메일
 
-  private String profession; // 사용자 직업(의사, 간호사 등)
+  private String fcmToken; // fcm 토큰
 
   @ManyToOne
   @JoinColumn
   private HospitalEntity hospital;
-
-  @ManyToOne
-  @JoinColumn
-  private PermissionEntity permission;
 
   @Temporal(TemporalType.TIMESTAMP)
   private Date createdAt; // 계정 생성일
@@ -61,6 +59,7 @@ public class UserEntity {
   @Temporal(TemporalType.TIMESTAMP)
   private Date updatedAt; // 마지막 업데이트 일
 
+  @Builder.Default
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
       joinColumns = @JoinColumn,
@@ -68,8 +67,10 @@ public class UserEntity {
   )
   private Set<RoleEntity> roles = new HashSet<>();
 
-  @Builder.Default
-  private Boolean valid = false;
+  @Enumerated(EnumType.STRING)
+  private RoleEntity.RoleType primaryRole;
+
+  private Boolean valid;
 
 
   // 최초 생성시 실행
@@ -78,6 +79,7 @@ public class UserEntity {
   protected void onCreate() {
     this.createdAt = new Date();
     this.updatedAt = new Date();
+    this.valid = false;
   }
 
   // 업데이트시 실행

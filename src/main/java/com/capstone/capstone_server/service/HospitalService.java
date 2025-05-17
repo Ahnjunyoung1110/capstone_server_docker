@@ -31,6 +31,10 @@ public class HospitalService {
 
   }
 
+  public HospitalEntity findHospitalByUuid(String uuid) {
+    return hospitalRepository.findByUuid(uuid);
+  }
+
   // 신규 병원 생성
   public HospitalEntity createHospital(HospitalEntity hospital) {
     if (hospital == null) {
@@ -73,19 +77,18 @@ public class HospitalService {
   }
 
   // 기존 병원 삭제
-  public HospitalEntity deleteHospital(HospitalEntity hospital) {
-    if (hospital == null) {
+  public HospitalEntity deleteHospital(Integer id) {
+    if (id == null) {
       throw new IllegalArgumentException("hospital cannot be null");
     }
 
     // 기존 존재하는 병원인지 확인
-    HospitalEntity findEntity = hospitalRepository.findById(hospital.getId())
-        .orElse(null);
-    if (findEntity == null) {
+    Optional<HospitalEntity> findEntity = hospitalRepository.findById(id);
+    if (findEntity.isEmpty()) {
       throw new IllegalArgumentException("Such hospital not found");
     }
-
-    findEntity.setValid(false);
+    HospitalEntity hospital = findEntity.get();
+    hospital.setValid(false);
 
     return hospitalRepository.save(hospital);
   }

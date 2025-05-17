@@ -18,31 +18,28 @@ public class StorageService {
   private final StorageRepository storageRepository;
   private final HospitalService hospitalService;
   private final StorageMapper storageMapper;
+  private final BeaconService beaconService;
 
   public StorageService(StorageRepository storageRepository, HospitalService hospitalService,
-      StorageMapper storageMapper) {
+      StorageMapper storageMapper, BeaconService beaconService) {
     this.storageRepository = storageRepository;
     this.hospitalService = hospitalService;
     this.storageMapper = storageMapper;
+    this.beaconService = beaconService;
   }
 
 
   // 검색 메서드
-  public List<StorageDTO> getAllStorages(Boolean valid, Integer hospitalId) {
+  public List<StorageDTO> getAllStorages(Integer hospitalId) {
     log.info("getAllStorages");
-    log.info("valid: {}, hospitalId: {}", valid, hospitalId);
+    log.info("hospitalId: {}", hospitalId);
 
-    // valid는 null일 수 없음
-    if (valid == null) {
-      log.warn("valid is null");
-      throw new IllegalArgumentException("valid is null");
-    }
     // hospital 조건을 걸지 않은경우 전체 검색
     if (hospitalId == null) {
       log.info("hospitalId is null");
     }
 
-    List<StorageEntity> responseEntities = storageRepository.serchStorage(valid, hospitalId);
+    List<StorageEntity> responseEntities = storageRepository.serchStorage(hospitalId);
     // dto로 변환
     return storageMapper.toStorageDTOList(responseEntities);
   }
@@ -61,19 +58,21 @@ public class StorageService {
   }
 
   // create 서비스
-  public StorageDTO createStorage(StorageDTO storageDTO) {
+  public StorageDTO createStorage(String uuid, StorageDTO storageDTO) {
     log.info("createStorage");
     log.info("storageDTO: {}", storageDTO);
 
     StorageEntity storageEntity = dtoToStorageEntity(storageDTO);
-    if (storageEntity == null) {
+    if (storageEntity == null || uuid == null) {
       log.warn("storageEntity is null");
       throw new IllegalArgumentException("storageEntity is null");
     }
 
     log.info("storageEntity: {}", storageEntity);
+    HospitalEntity hospitalEntity = hospitalService.findHospitalByUuid(uuid);
 
-    StorageEntity responseEntity =  storageRepository.save(storageEntity);
+    storageEntity.setHospital(hospitalEntity);
+    StorageEntity responseEntity = storageRepository.save(storageEntity);
     return storageMapper.toStorageDTO(responseEntity);
   }
 
@@ -88,6 +87,7 @@ public class StorageService {
       throw new IllegalArgumentException("storageEntity is null");
     }
 
+    // id를 기준으로 기존의 storage를 가져오기
     Optional<StorageEntity> storageEntityOptional = storageRepository.findById(
         storageEntity.getId());
     if (storageEntityOptional.isEmpty()) {
@@ -97,12 +97,18 @@ public class StorageService {
 
     // 기존 내용을 업데이트
     StorageEntity storageEntityToUpdate = storageEntityOptional.get();
-    storageEntityToUpdate.setStorageName(storageEntity.getStorageName());
-    storageEntityToUpdate.setHospital(storageEntity.getHospital());
 
-    StorageEntity responseentity = storageRepository.save(storageEntityToUpdate);
+    // 제공된 beaconId를 기반으로 비콘을 db에서 찾아와 변경하기
+    if (storageDTO.getBeacon() != null) {
+      storageEntity.setBeacon(beaconService.getBeaconEntityById(storageDTO.getBeacon()));
+      storageEntityToUpdate.setBeacon(storageEntity.getBeacon());
+    }
+    if (storageDTO.getStorageName() != null) {
+      storageEntityToUpdate.setStorageName(storageDTO.getStorageName());
+    }
+    StorageEntity response = storageRepository.save(storageEntityToUpdate);
 
-    return storageMapper.toStorageDTO(responseentity);
+    return storageMapper.toStorageDTO(response);
   }
 
   // Delete 서비스
@@ -120,10 +126,8 @@ public class StorageService {
       throw new IllegalArgumentException("storageEntity not found");
     }
 
-    // 기존 Valid 변경
-    StorageEntity storageEntityToUpdate = storageEntityOptional.get();
-    storageEntityToUpdate.setValid(false);
-    storageRepository.save(storageEntityToUpdate);
+    // 삭제
+    storageRepository.delete(storageEntityOptional.get());
   }
 
   // DTO를 Entity로 변환하는 메서드
@@ -134,7 +138,7 @@ public class StorageService {
       log.warn("dto is null");
       throw new IllegalArgumentException("dto is null");
     }
-    HospitalEntity hospitalEntity = hospitalService.getHospitalById(dto.getHospitalId());
+    HospitalEntity hospitalEntity = hospitalService.getHospitalById(dto.getHospital());
     if (hospitalEntity == null) {
       log.warn("hospitalEntity is null");
       throw new IllegalArgumentException("hospitalEntity is null");

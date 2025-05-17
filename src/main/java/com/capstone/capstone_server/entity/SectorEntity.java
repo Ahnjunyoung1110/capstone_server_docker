@@ -1,10 +1,12 @@
 package com.capstone.capstone_server.entity;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Temporal;
@@ -15,31 +17,28 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PermissionEntity {
+@Data
+public class SectorEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private Integer id;
 
-  private String permissionName;
-
   @Column(nullable = false)
-  private double permissionLevel;
+  private String name;
+
+  @ManyToOne
+  private HospitalEntity hospital;
 
   @Temporal(TemporalType.TIMESTAMP)
-  private Date createdAt;
+  private Date createdAt; // 계정 생성일
 
   @Temporal(TemporalType.TIMESTAMP)
-  private Date updatedAt;
-
-  @Builder.Default
-  private boolean valid = true;
-
+  private Date updatedAt; // 마지막 업데이트 일
 
   // 최초 생성시 실행
   // createdAt 과 updatedAt을 현재시간으로 설정한다.
@@ -55,4 +54,6 @@ public class PermissionEntity {
   protected void onUpdate() {
     this.updatedAt = new Date();
   }
+
+
 }

@@ -12,9 +12,10 @@ import lombok.NoArgsConstructor;
 public class WasteDTO {
 
   private String id;
-  private Integer hospital;
-  private Integer storage;
-  private Integer beacon;
-  private Integer wasteType;
-  private Integer wasteStatus;
+  private Integer hospitalId;
+  private Integer storageId;
+  private Integer beaconId;
+  private Integer wasteTypeId;
+  private Integer wasteStatusId;
+  private String description;
 }

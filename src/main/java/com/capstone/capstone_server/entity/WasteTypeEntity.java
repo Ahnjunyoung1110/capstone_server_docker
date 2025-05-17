@@ -38,11 +38,6 @@ public class WasteTypeEntity {
   @Column(nullable = false)
   private Integer period;
 
-
-
-  @Builder.Default
-  private Boolean valid = true;
-
   @Temporal(TemporalType.TIMESTAMP)
   private Date createdAt; // 계정 생성일
 

@@ -27,8 +27,10 @@ public class RoleEntity {
   @Column(nullable = false, unique = true)
   private RoleType name;
 
+  private String description;
+
   public enum RoleType {
-    ADMIN, USER
+    ADMIN, MODERATOR, WAREHOUSE_MANAGER ,USER
   }
 
 }

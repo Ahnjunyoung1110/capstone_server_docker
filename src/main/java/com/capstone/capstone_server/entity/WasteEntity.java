@@ -26,8 +26,6 @@ import org.hibernate.annotations.GenericGenerator;
 public class WasteEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO, generator = "waste-id-generator")
-  @GenericGenerator(name = "waste-id-generator", strategy = "com.capstone.capstone_server.service.Waste.WasteIdGenerator")
   private String id;
 
   @ManyToOne
@@ -47,6 +45,10 @@ public class WasteEntity {
   @JoinColumn(nullable = false)
   private BeaconEntity beacon;
 
+
+  // 폐기물 설명
+  private String description;
+
   // 폐기물 종류
   @ManyToOne
   @JoinColumn(nullable = false)
@@ -56,8 +58,7 @@ public class WasteEntity {
   @ManyToOne
   private WasteStatusEntity wasteStatus;
 
-  @Builder.Default
-  private Boolean valid = true;
+  private Boolean valid;
 
   @Temporal(TemporalType.TIMESTAMP)
   private Date createdAt; // 계정 생성일
@@ -71,6 +72,7 @@ public class WasteEntity {
   protected void onCreate() {
     this.createdAt = new Date();
     this.updatedAt = new Date();
+    this.valid = true;
   }
 
   // 업데이트시 실행

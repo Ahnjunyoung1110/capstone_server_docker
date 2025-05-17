@@ -11,9 +11,11 @@ import org.mapstruct.Mapping;
 
 public interface StorageMapper {
 
-  @Mapping(source = "hospital.id", target = "hospitalId")
+  @Mapping(source = "hospital.id", target = "hospital")
+  @Mapping(source = "beacon.id", target = "beacon")
   StorageDTO toStorageDTO(StorageEntity entity);
 
-  @Mapping(source = "hospital.id", target = "hospitalId")
+  @Mapping(source = "hospital.id", target = "hospital")
+  @Mapping(source = "beacon.id", target = "beacon")
   List<StorageDTO> toStorageDTOList(List<StorageEntity> entities);
 }

@@ -31,11 +31,19 @@ public class AuthFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
     logger.info("Filtering request");
 
+    // 토큰이 필요없는 경로에 대해서 패스
+    String path = request.getRequestURI();
+    if (path.startsWith("/auth/signup") ||path.startsWith("/auth/signin") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs") || path.equals("/hospital")) {
+      filterChain.doFilter(request, response);
+      return;
+    }
+
     // 토큰 가져오기
     String token = request.getHeader("Authorization");
 
     // 헤더에 Bearer 토큰이 존재하는 경우
     if (token != null && token.startsWith("Bearer ")) {
+      logger.info("Bearer token found");
       token = token.substring(7);
       CustomUserDetails userDetails = tokenProvider.validateToken(token);
 
@@ -46,7 +54,7 @@ public class AuthFilter extends OncePerRequestFilter {
         logger.info("user Role: " + userDetails.getAuthorities());
 
         // 사용자의 인증 정보를 Spring Security에 등록
-        AbstractAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(uuid, null,
+        AbstractAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null,
             userDetails.getAuthorities());
 
         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

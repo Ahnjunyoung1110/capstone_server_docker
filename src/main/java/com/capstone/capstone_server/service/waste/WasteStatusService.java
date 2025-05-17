@@ -1,4 +1,4 @@
-package com.capstone.capstone_server.service.Waste;
+package com.capstone.capstone_server.service.waste;
 
 import com.capstone.capstone_server.dto.WasteStatusDTO;
 import com.capstone.capstone_server.entity.WasteStatusEntity;
@@ -37,6 +37,22 @@ public class WasteStatusService {
     return wasteStatusRepository.findById(id).orElse(null);
   }
 
+  // 이전 WasteStatus를 리턴
+  public WasteStatusEntity transportTrue(WasteStatusEntity wasteStatusEntity, int count) {
+    if(wasteStatusRepository.count() < count + wasteStatusEntity.getStatusLevel()) {
+      log.warn("already final transport");
+      throw new RuntimeException("already final transport");
+    }
+    return wasteStatusRepository.findByStatusLevel(wasteStatusEntity.getStatusLevel() + count);
+  }
+
+
+  // 해당 Waste가 마지막 WasteStatus인지 확인
+  public boolean checkFinal(WasteStatusEntity wasteStatusEntity) {
+
+    return wasteStatusRepository.count() == wasteStatusEntity.getStatusLevel();
+  }
+
   // 신규 생성
   public List<WasteStatusDTO> createWasteStatus(WasteStatusDTO wasteStatusDTO) {
     if (wasteStatusDTO == null) {
@@ -46,7 +62,7 @@ public class WasteStatusService {
 
     // 최초 순서를 0번째로 생성
     WasteStatusEntity statusEntity = wasteStatusMapper.DtoToEntity(wasteStatusDTO);
-    statusEntity.setStatusLevel(0);
+    statusEntity.setStatusLevel(100);
     wasteStatusRepository.save(statusEntity);
 
     return updateWasteStatus(getWasteStatus());
@@ -57,6 +73,12 @@ public class WasteStatusService {
     if (wasteStatusDTOs == null) {
       log.error("WasteStatusDTOs is null");
       throw new IllegalArgumentException("WasteStatusDTOs is null");
+    }
+
+    if (wasteStatusDTOs.size() != wasteStatusRepository.count()) {
+      log.error("WasteStatusDTOs size does not match number of wasteStatusDTOs");
+      throw new IllegalArgumentException(
+          "WasteStatusDTOs size does not match number of wasteStatusDTOs");
     }
 
     List<WasteStatusEntity> wasteStatusEntities = wasteStatusMapper.DtoToEntityList(
