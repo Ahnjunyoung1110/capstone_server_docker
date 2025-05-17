@@ -1,5 +1,6 @@
 package com.capstone.capstone_server.repository;
 
+import com.capstone.capstone_server.entity.BeaconEntity;
 import com.capstone.capstone_server.entity.WasteEntity;
 import java.util.Date;
 import java.util.List;
@@ -40,4 +41,6 @@ public interface WasteRepository extends JpaRepository<WasteEntity, String> {
 
   @Query("SELECT MAX(w.id) FROM WasteEntity w WHERE w.id LIKE :prefix")
   String findMaxIdLike(@Param("prefix") String prefix);
+
+  List<WasteEntity> findAllByBeaconIn(List<BeaconEntity> beaconEntities);
 }

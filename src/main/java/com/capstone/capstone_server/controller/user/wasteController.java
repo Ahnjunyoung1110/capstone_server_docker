@@ -114,6 +114,7 @@ public class wasteController {
   @GetMapping("/getAllWasteHs")
   public ResponseEntity<List<WasteDTO>> getAllWasteById(
       @AuthenticationPrincipal CustomUserDetails details,
+      @RequestParam(defaultValue = "true") boolean valid,
       @RequestParam(required = false) String wasteId, // 폐기물 id
       @RequestParam(required = false) Integer beaconId, // 비컨 id
       @RequestParam(required = false) Integer wasteTypeId, // 폐기물 종류 Id
@@ -132,7 +133,7 @@ public class wasteController {
 
     String uuid = details.getUsername();
 
-    List<WasteEntity> wasteEntities = wasteService.getAllWasteEverything(true, uuid, wasteId,
+    List<WasteEntity> wasteEntities = wasteService.getAllWasteEverything(valid, uuid, wasteId,
         beaconId, wasteTypeId, wasteStatusId, storageId, startDate, endDate);
     List<WasteDTO> wasteDTOs = wasteMapper.toDTOList(wasteEntities);
     return ResponseEntity.ok().body(wasteDTOs);
@@ -193,6 +194,19 @@ public class wasteController {
     log.info("eliminate beacon controller {}", id);
     WasteDTO wasteDTO = wasteService.eliminateBeacon(id);
     return ResponseEntity.ok().body(wasteDTO);
+  }
+
+  // 비콘의 DeviceAddress를 param으로 wasteEntity를 리턴하는 함수
+  @Operation(
+      summary = "DeviceAddress로 검색",
+      description = "DeviceAddress List로 여러개의 Waste를 찾아온다."
+  )
+  @PostMapping("/getByBeacon")
+  public ResponseEntity<List<WasteDTO>> getAllWasteByDeviceAddress(
+      @RequestBody List<String> deviceAddressList) {
+    log.info("getAllWasteByDeviceAddress request {}", deviceAddressList);
+
+    return ResponseEntity.ok().body(wasteService.getWasteByBeaconMac(deviceAddressList));
   }
 
   // 폐기물을 삭제(비활성화)하는 함수

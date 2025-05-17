@@ -60,6 +60,12 @@ public class BeaconService {
     return entity;
   }
 
+  // Beacon의 Mac주소로 BeaconEntity를 리턴
+  public List<BeaconEntity> getAllBeaconsByMacAddress(List<String> macAddresses) {
+    return beaconReposiroty.findAllByDeviceAddressInAndValidIsTrue(macAddresses);
+
+  }
+
   // 신규 비컨 추가 메서드
   public BeaconDTO createBeacon(BeaconDTO beaconDTO) {
     BeaconEntity entity = dToToEntitiy(beaconDTO);

@@ -154,6 +154,10 @@ public class UserService {
       log.warn("role is null");
       throw new IllegalArgumentException("role is null");
     }
+    if(roles.contains(RoleType.ADMIN)) {
+      log.warn("admin role is set to admin");
+      throw new IllegalArgumentException("admin role is set to admin");
+    }
 
     // 유저가 존재하는지 확인
     UserEntity findUser = userRepository.findById(userUuid).orElse(null);

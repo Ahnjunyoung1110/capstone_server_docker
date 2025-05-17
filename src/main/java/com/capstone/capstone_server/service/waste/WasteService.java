@@ -137,6 +137,27 @@ public class WasteService {
     return wasteMapper.toWasteDTO(responseEntity);
   }
 
+  // DeviceAddress LIST를 가지고 해당 WasteEntity List를 리턴
+  public List<WasteDTO> getWasteByBeaconMac(List<String> beaconMac) {
+    log.info("getWasteByBeaconMac, {}", beaconMac);
+    if (beaconMac == null || beaconMac.isEmpty()) {
+      log.warn("beaconMac is null or empty");
+      throw new IllegalArgumentException("beaconMac is null or empty");
+    }
+
+    List<BeaconEntity> beaconEntities = beaconService.getAllBeaconsByMacAddress(beaconMac);
+    if (beaconEntities == null || beaconEntities.isEmpty()) {
+      log.warn("beaconEntities is null or empty");
+      throw new IllegalArgumentException("beaconEntities is null or empty");
+    }
+    List<WasteEntity> wasteEntities = wasteRepository.findAllByBeaconIn(beaconEntities);
+    if (wasteEntities == null || wasteEntities.isEmpty()) {
+      log.warn("wasteEntities is null or empty");
+      throw new IllegalArgumentException("wasteEntities is null or empty");
+    }
+    return wasteMapper.toDTOList(wasteEntities);
+  }
+
   // 폐기물 수정
   public WasteDTO updateWaste(WasteDTO wasteDTO, String id, String uuid) {
     WasteEntity wasteEntity = dtoToEntity(wasteDTO);
@@ -185,7 +206,14 @@ public class WasteService {
 
     log.info("To : {}", wasteStatus);
     BeaconEntity beacon = waste.getBeacon();
-    beacon.setUsed(!wasteStatusService.checkFinal(wasteStatus));
+
+    if (wasteStatusService.checkFinal(wasteStatus)) {
+      beacon.setUsed(Boolean.FALSE);
+      waste.setValid(false);
+      waste.setBeacon(null);
+    } else {
+      beacon.setUsed(Boolean.TRUE);
+    }
 
     waste.setBeacon(beacon);
     waste.setWasteStatus(wasteStatus);
@@ -209,6 +237,7 @@ public class WasteService {
 
     log.info("delete waste : {}", wasteEntity);
     wasteEntity.setValid(false);
+    wasteEntity.getBeacon().setUsed(Boolean.FALSE);
     wasteRepository.save(wasteEntity);
   }
 

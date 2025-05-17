@@ -4,20 +4,30 @@ import com.capstone.capstone_server.detail.CustomUserDetails;
 import com.capstone.capstone_server.entity.UserEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.crypto.SecretKey;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TokenProvider {
 
-  private final SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+  @Value("${jwt.secret}")
+  private String secret;
 
+  private SecretKey secretKey;
+
+  @PostConstruct
+  public void init() {
+    byte[] keyBytes = Base64.getEncoder().encode(secret.getBytes());
+    this.secretKey = Keys.hmacShaKeyFor(keyBytes);
+  }
 
   public String generateToken(UserEntity userEntity) {
 
