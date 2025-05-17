@@ -14,5 +14,5 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
 
   Optional<UserEntity> findByUsername(String username);
 
-  List<UserEntity> findByHospitalId(Long hospitalId);
+  List<UserEntity> findByHospitalId(Integer hospitalId);
 }

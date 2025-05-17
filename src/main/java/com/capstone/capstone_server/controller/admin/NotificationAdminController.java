@@ -1,6 +1,5 @@
 package com.capstone.capstone_server.controller.admin;
 
-import com.capstone.capstone_server.controller.user.NotificationController;
 import com.capstone.capstone_server.dto.NotificationRequestDTO;
 import com.capstone.capstone_server.service.NotificationService;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +20,7 @@ public class NotificationAdminController {
 
     @PostMapping("/hospital/{hospitalId}")
     public ResponseEntity<Void> sendNotificationToHospitalUsers(
-            @PathVariable Long hospitalId,
+            @PathVariable Integer hospitalId,
             @RequestBody NotificationRequestDTO request
     ) {
         log.info("병원 ID {}의 유저들에게 알림 전송 요청: title='{}', message='{}'",
