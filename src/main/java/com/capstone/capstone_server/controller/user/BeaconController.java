@@ -58,13 +58,14 @@ public class BeaconController {
   @Operation(
       summary = "비콘 생성",
       description = "유저 권한으로 신규 비콘을 생성 합니다."
-          + "필수 param: deviceAddress(맥주소 또는 uuid), "
-          + "옵션 param: location, label, hospital"
+          + "필수 param: deviceAddress(맥주소 또는 uuid), hospital "
+          + "옵션 param: location, label, "
   )
   @PostMapping("/createBc")
-  public ResponseEntity<BeaconDTO> createBeacon(@RequestBody BeaconDTO beaconDTO) {
+  public ResponseEntity<BeaconDTO> createBeacon(@AuthenticationPrincipal CustomUserDetails details,
+      @RequestBody BeaconDTO beaconDTO) {
     log.info("createBeacon Controller");
-    return ResponseEntity.ok(beaconService.createBeacon(beaconDTO));
+    return ResponseEntity.ok(beaconService.createBeacon(details.getUsername(), beaconDTO));
   }
 
   @Operation(

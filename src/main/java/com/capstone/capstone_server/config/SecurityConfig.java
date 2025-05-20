@@ -32,7 +32,7 @@ public class SecurityConfig {
         .authorizeHttpRequests(authz -> authz
             .requestMatchers("/", "/auth/**", "/swagger-ui/**", "/v3/api-docs/**",
                 "/swagger-ui.html", "/hospital").permitAll()
-            .requestMatchers("/admin/**").hasRole("ADMIN")
+            .requestMatchers("/admin/**").hasAnyRole("ADMIN", "MODERATOR")
             .anyRequest().authenticated())
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

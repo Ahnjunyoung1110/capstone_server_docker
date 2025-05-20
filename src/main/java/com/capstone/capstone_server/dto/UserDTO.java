@@ -24,4 +24,5 @@ public class UserDTO {
   private Integer hospitalId;
   private Set<RoleType> roles;
   private RoleType primaryRole;
+  private Boolean valid;
 }

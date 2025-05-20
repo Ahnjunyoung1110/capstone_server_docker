@@ -15,7 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -172,15 +174,22 @@ public class wasteController {
   // 폐기물을 다음 Status로 변경하는 함수ㅜ
   @Operation(
       summary = "다음 폐기물 상태로 변경",
-      description = "DB를 검색해서 폐기물의 상태를 다음으로 변경시킨다."
+      description = "DB를 검색해서 폐기물의 상태를 다음으로 변경시킨다. 마지막 단계로는 창고관리자만 가능하다."
           + "description을 param으로 넣을 수 있다."
   )
   @PutMapping("/toNext/{id}")
   public ResponseEntity<WasteDTO> transportStatus(
       @AuthenticationPrincipal CustomUserDetails details, @PathVariable String id,
       @RequestParam(required = false) String description) {
+
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+    boolean isWarehouse = auth.getAuthorities().stream()
+        .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_WAREHOUSE_MANAGER"));
+
+
     log.info("transportStatus request {}", id);
-    WasteDTO wasteDTO = wasteService.toNextStatus(details.getUsername(), id, description);
+    WasteDTO wasteDTO = wasteService.toNextStatus(details.getUsername(), id, description, isWarehouse);
     return ResponseEntity.ok().body(wasteDTO);
   }
 

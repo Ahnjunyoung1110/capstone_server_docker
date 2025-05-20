@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SectorDTO {
+
   private Integer id;
   private String name;
   private Integer hospital;

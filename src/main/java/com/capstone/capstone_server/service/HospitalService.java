@@ -42,7 +42,7 @@ public class HospitalService {
     }
 
     // 기존에 존재하는 병원인지  이름과 전화번호를 통해 확인
-    HospitalEntity findEntity = hospitalRepository.findByHospitalNameOrHospitalCall(
+    HospitalEntity findEntity = hospitalRepository.findByHospitalNameOrHospitalCallAndValidIsTrue(
         hospital.getHospitalName(), hospital.getHospitalCall()).orElse(null);
     if (findEntity != null) {
       log.info("Hospital already exists with name {}", hospital.getHospitalName());
@@ -66,6 +66,14 @@ public class HospitalService {
         .orElse(null);
     if (findEntity == null) {
       throw new IllegalArgumentException("Such hospital not found");
+    }
+
+    // 기존에 존재하는 병원인지  이름과 전화번호를 통해 확인
+    findEntity = hospitalRepository.findByHospitalNameOrHospitalCallAndValidIsTrue(
+        hospital.getHospitalName(), hospital.getHospitalCall()).orElse(null);
+    if (findEntity != null) {
+      log.info("Hospital already exists with name {}", hospital.getHospitalName());
+      throw new IllegalArgumentException("Hospital already exists");
     }
 
     // 기존 생성 시간 유지

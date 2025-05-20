@@ -89,6 +89,7 @@ public class DatabaseSeeder implements CommandLineRunner {
               .updatedAt(new Date())
               .valid(true)
               .roles(new HashSet<>(Set.of(adminRole, userRole, moderatorRole, warehouseRole)))
+              .primaryRole(RoleType.ADMIN)
               .build();
 
           userRepository.save(adminUser);

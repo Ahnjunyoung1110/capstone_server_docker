@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -35,16 +34,16 @@ public class StorageController {
   // 조건에 맞춰 창고를 리턴
   @Operation(
       summary = "창고 리턴",
-      description = "유저 권한으로 창고를 리턴합니다. param으로 hospitalId를 받습니다."
+      description = "유저 권한으로 유저 병원의 창고를 리턴합니다.."
   )
   @GetMapping
   public ResponseEntity<List<StorageDTO>> getAllStorage(
-      @RequestParam(required = false) Integer hospitalId // 소속 병원 창고 여부
+      @AuthenticationPrincipal CustomUserDetails details // 소속 병원 창고 여부
   ) {
     log.info("getAllStorageController");
 
     // 모든 엔티티 획득
-    List<StorageDTO> storageDTOS = storageService.getAllStorages(hospitalId);
+    List<StorageDTO> storageDTOS = storageService.getAllStorages(details.getUsername());
 
     log.info("Find result {}", storageDTOS);
 

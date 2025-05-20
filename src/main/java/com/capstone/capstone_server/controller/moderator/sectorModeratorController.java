@@ -44,7 +44,8 @@ public class sectorModeratorController {
 
   @Operation(
       summary = "소속 병원 Sector 생성",
-      description = "중간 관리자 권한으로 유저의 병원의 sector를 리턴합니다"
+      description = "중간 관리자 권한으로 유저의 병원의 sector를 생성합니다"
+          + "필수 param: hospital, name"
   )
   @PostMapping("/createSt")
   public ResponseEntity<SectorDTO> createSector(@AuthenticationPrincipal CustomUserDetails details,
@@ -57,6 +58,7 @@ public class sectorModeratorController {
   @Operation(
       summary = "소속 병원 Sector 업데이트",
       description = "중간 관리자 권한으로 유저의 병원의 sector를 업데이트 합니다"
+          + "필수 param: id, hospital, name"
   )
   @PutMapping("/updateSt/{id}")
   public ResponseEntity<SectorDTO> updateSector(@AuthenticationPrincipal CustomUserDetails details,

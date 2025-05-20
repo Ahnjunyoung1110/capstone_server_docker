@@ -28,7 +28,7 @@ public class BeaconEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
-  @Column(nullable = false, unique = true)
+  @Column(nullable = false)
   private String deviceAddress;
 
   private String location;
@@ -57,6 +57,8 @@ public class BeaconEntity {
   protected void onCreate() {
     this.createdAt = new Date();
     this.updatedAt = new Date();
+    this.used = false;
+    this.valid = true;
   }
 
   // 업데이트시 실행

@@ -24,6 +24,8 @@ services:
       - MARIADB_DATABASE=devdb
       - MARIADB_USER=devuser
       - MARIADB_PASSWORD=changeme
+    ports:
+      - "3306:3306"
     depends_on:
       - redis
     healthcheck:

@@ -2,6 +2,7 @@ package com.capstone.capstone_server.service;
 
 
 import com.capstone.capstone_server.dto.StorageDTO;
+import com.capstone.capstone_server.entity.BeaconEntity;
 import com.capstone.capstone_server.entity.HospitalEntity;
 import com.capstone.capstone_server.entity.StorageEntity;
 import com.capstone.capstone_server.mapper.StorageMapper;
@@ -30,16 +31,17 @@ public class StorageService {
 
 
   // 검색 메서드
-  public List<StorageDTO> getAllStorages(Integer hospitalId) {
+  public List<StorageDTO> getAllStorages(String Uuid) {
     log.info("getAllStorages");
-    log.info("hospitalId: {}", hospitalId);
 
+    HospitalEntity hospital = hospitalService.findHospitalByUuid(Uuid);
     // hospital 조건을 걸지 않은경우 전체 검색
-    if (hospitalId == null) {
-      log.info("hospitalId is null");
+    if (hospital == null) {
+      log.info("Hospital not found null");
+      throw new RuntimeException("Hospital not found");
     }
 
-    List<StorageEntity> responseEntities = storageRepository.serchStorage(hospitalId);
+    List<StorageEntity> responseEntities = storageRepository.findAllByHospital(hospital);
     // dto로 변환
     return storageMapper.toStorageDTOList(responseEntities);
   }
@@ -71,6 +73,21 @@ public class StorageService {
     log.info("storageEntity: {}", storageEntity);
     HospitalEntity hospitalEntity = hospitalService.findHospitalByUuid(uuid);
 
+    // 비콘을 등록하는경우
+    if (storageDTO.getBeacon() != null) {
+      BeaconEntity beacon = beaconService.getBeaconEntityById(storageDTO.getBeacon());
+      if (beacon == null) {
+        log.warn("beacon is null");
+        throw new IllegalArgumentException("beacon is null");
+      }
+      if (beacon.isUsed()) {
+        log.warn("beacon is used");
+        throw new IllegalArgumentException("beacon is used");
+      }
+      beacon.setUsed(true);
+      storageEntity.setBeacon(beacon);
+    }
+
     storageEntity.setHospital(hospitalEntity);
     StorageEntity responseEntity = storageRepository.save(storageEntity);
     return storageMapper.toStorageDTO(responseEntity);
@@ -100,12 +117,24 @@ public class StorageService {
 
     // 제공된 beaconId를 기반으로 비콘을 db에서 찾아와 변경하기
     if (storageDTO.getBeacon() != null) {
-      storageEntity.setBeacon(beaconService.getBeaconEntityById(storageDTO.getBeacon()));
-      storageEntityToUpdate.setBeacon(storageEntity.getBeacon());
+      BeaconEntity beacon = beaconService.getBeaconEntityById(storageDTO.getBeacon());
+      if (beacon == null) {
+        log.warn("beacon is null");
+        throw new IllegalArgumentException("beacon is null");
+      }
+      if (beacon.isUsed()) {
+        log.warn("beacon is used");
+        throw new IllegalArgumentException("beacon is used");
+      }
+      beacon.setUsed(true);
+      // 기존 비콘이 있는 경우 사용 해제
+      if (storageEntityToUpdate.getBeacon() != null) {
+        storageEntityToUpdate.getBeacon().setUsed(false);
+      }
+      storageEntityToUpdate.setBeacon(beacon);
     }
-    if (storageDTO.getStorageName() != null) {
-      storageEntityToUpdate.setStorageName(storageDTO.getStorageName());
-    }
+
+    storageEntityToUpdate.setStorageName(storageDTO.getStorageName());
     StorageEntity response = storageRepository.save(storageEntityToUpdate);
 
     return storageMapper.toStorageDTO(response);
@@ -120,14 +149,13 @@ public class StorageService {
       throw new IllegalArgumentException("storageEntity is null");
     }
 
-    Optional<StorageEntity> storageEntityOptional = storageRepository.findById(storageId);
-    if (storageEntityOptional.isEmpty()) {
+    StorageEntity entity = storageRepository.findById(storageId).orElse(null);
+    if (entity == null) {
       log.warn("storageEntity not found");
       throw new IllegalArgumentException("storageEntity not found");
     }
-
-    // 삭제
-    storageRepository.delete(storageEntityOptional.get());
+    entity.getBeacon().setUsed(false);
+    storageRepository.delete(entity);
   }
 
   // DTO를 Entity로 변환하는 메서드

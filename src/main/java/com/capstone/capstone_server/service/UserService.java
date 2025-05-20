@@ -10,6 +10,7 @@ import com.capstone.capstone_server.entity.UserEntity;
 import com.capstone.capstone_server.mapper.UserMapper;
 import com.capstone.capstone_server.repository.RoleRepository;
 import com.capstone.capstone_server.repository.UserRepository;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -58,10 +59,33 @@ public class UserService {
       throw new IllegalArgumentException("Same user id is already exists");
     }
 
-    String EncryptedPassword = passwordEncoder.encode(userEntity.getPassword());
-    userEntity.setPassword(EncryptedPassword);
-    UserEntity savedUserEntity = userRepository.save(userEntity);
-    return userMapper.EntityToDTO(savedUserEntity);
+    UserEntity saveUserEntity = UserEntity.builder()
+        .username(userEntity.getUsername())
+        .name(userEntity.getName())
+        .password(passwordEncoder.encode(userEntity.getPassword()))
+        .email(userEntity.getEmail())
+        .hospital(hospitalService.getHospitalById(userDTO.getHospitalId()))
+        .phoneNumber(userDTO.getPhoneNumber())
+        .build();
+
+    UserEntity responseEntity = userRepository.save(saveUserEntity);
+    return userMapper.EntityToDTO(responseEntity);
+  }
+
+
+  // 해당 병원에 속한 유저를 리턴하는 메서드
+  public List<UserDTO> findUserInSameHospital(String uuid) {
+    UserEntity userEntity = findByUuid(uuid);
+    List<UserEntity> entities = userRepository.findAllByHospital(userEntity.getHospital());
+
+    return userMapper.EntityToDTOList(entities);
+  }
+
+  // db에 저장된 모든 유저를 리턴하는 메서드
+  public List<UserDTO> findUserAll() {
+    List<UserEntity> entities = userRepository.findAll();
+
+    return userMapper.EntityToDTOList(entities);
   }
     
     /*
@@ -97,7 +121,7 @@ public class UserService {
     return userEntity;
   }
 
-  // 유저의 정보를 변경하는 함수.
+  // 유저가 본인의 정보를 변경하는 함수.
   public UserDTO updateUser(UserDTO userDTO, String uuid) {
     if (userDTO == null) {
       throw new IllegalArgumentException("userDTO is null");
@@ -117,6 +141,32 @@ public class UserService {
     userEntity.setName(userDTO.getName());
     userEntity.setPhoneNumber(String.valueOf(userDTO.getPhoneNumber()));
     userEntity.setHospital(hospitalService.getHospitalById(userDTO.getHospitalId()));
+
+    return userMapper.EntityToDTO(userRepository.save(userEntity));
+  }
+
+  // 운영자가 유저의 정보를 변경하는 함수
+  public UserDTO updateUserByAdmin(UserDTO userDTO, String requestUuid, String uuid,
+      boolean admin) {
+    if (userDTO == null) {
+      log.warn("userDTO is null");
+      throw new IllegalArgumentException("userDTO is null");
+    }
+    UserEntity userEntity = findByUuid(uuid);
+    if (!userEntity.getUuid().equals(userDTO.getUuid())) {
+      log.warn("User with id {} does not exist", userDTO.getUuid());
+      throw new IllegalArgumentException("User with id " + userDTO.getUuid() + " does not exist");
+    }
+
+    UserEntity requestEntity = findByUuid(requestUuid);
+    if (!admin && !requestEntity.getHospital().equals(userEntity.getHospital())) {
+      log.warn("Hospial is not same as request hospital");
+      throw new IllegalArgumentException("Hospial is not same as request hospital");
+    }
+
+    userEntity.setEmail(userDTO.getEmail());
+    userEntity.setName(userDTO.getName());
+    userEntity.setPhoneNumber(String.valueOf(userDTO.getPhoneNumber()));
 
     return userMapper.EntityToDTO(userRepository.save(userEntity));
   }
@@ -154,7 +204,7 @@ public class UserService {
       log.warn("role is null");
       throw new IllegalArgumentException("role is null");
     }
-    if(roles.contains(RoleType.ADMIN)) {
+    if (roles.contains(RoleType.ADMIN)) {
       log.warn("admin role is set to admin");
       throw new IllegalArgumentException("admin role is set to admin");
     }
@@ -181,13 +231,13 @@ public class UserService {
   }
 
   // 로그아웃하는 함수
-  public void logOut(String uuid, String responseUuid){
-    if(uuid == null || responseUuid == null) {
+  public void logOut(String uuid, String responseUuid) {
+    if (uuid == null || responseUuid == null) {
       throw new IllegalArgumentException("userEntity is null");
     }
-    if(uuid.equals(responseUuid)) {
+    if (uuid.equals(responseUuid)) {
       UserEntity userEntity = userRepository.findById(uuid).orElse(null);
-      if(userEntity != null) {
+      if (userEntity != null) {
         userEntity.setFcmToken(null);
         userRepository.save(userEntity);
       }
@@ -215,8 +265,6 @@ public class UserService {
   }
 
 
-
-
   // DTO 를 Entity로 변환하는 메서드
   public UserEntity DTOToEntity(UserDTO userDTO) {
     if (userDTO == null) {
@@ -235,5 +283,47 @@ public class UserService {
         .name(userDTO.getName())
         .hospital(hospital)
         .build();
+  }
+
+  public UserDTO invalidUser(String uuid, String requestUuid) {
+    if (uuid == null || requestUuid == null) {
+      log.warn("requestUuid is null");
+      throw new IllegalArgumentException("requestUuid is null");
+    }
+
+    UserEntity userEntity = userRepository.findById(uuid).orElse(null);
+    UserEntity requestEntity = userRepository.findById(requestUuid).orElse(null);
+    if (userEntity == null || requestEntity == null) {
+      log.warn("userEntity is null");
+      throw new IllegalArgumentException("userEntity is null");
+    }
+
+    if (!userEntity.getHospital().equals(requestEntity.getHospital())) {
+      log.warn("hospital is not the same");
+      throw new IllegalArgumentException("hospital is not the same");
+    }
+
+    if (requestEntity.getRoles().contains(RoleType.MODERATOR)) {
+      log.warn("moderator is set to moderator");
+      throw new IllegalArgumentException("moderator is set to moderator");
+    }
+
+    requestEntity.setValid(false);
+    userRepository.save(userEntity);
+
+    return userMapper.EntityToDTO(userEntity);
+  }
+
+  public UserDTO invalidUserByAdmin(String id) {
+    log.info("invalidUserByAdmin {}", id);
+    UserEntity userEntity = userRepository.findById(id).orElse(null);
+    if (userEntity == null) {
+      log.warn("userEntity is null");
+      throw new IllegalArgumentException("userEntity is null");
+    }
+
+    userEntity.setValid(false);
+    userRepository.save(userEntity);
+    return userMapper.EntityToDTO(userEntity);
   }
 }
