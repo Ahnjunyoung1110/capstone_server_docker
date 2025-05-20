@@ -47,6 +47,7 @@ public class UserEntity {
 
   private String email; // 사용자 이메일
 
+  @Column(length = 2048)
   private String fcmToken; // fcm 토큰
 
   @ManyToOne

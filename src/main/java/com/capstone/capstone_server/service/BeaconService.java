@@ -29,7 +29,7 @@ public class BeaconService {
   // 소속 병원 전체 비컨 조회 메서드
   public List<BeaconDTO> getAllBeacons(String uuid) {
     HospitalEntity findhospital = hospitalService.findHospitalByUuid(uuid);
-    List<BeaconEntity> entities = beaconReposiroty.findAllByHospitalId(findhospital.getId());
+    List<BeaconEntity> entities = beaconReposiroty.findAllByHospitalIdAndValidIsTrue(findhospital.getId());
 
     return beaconMapper.toBeaconDTOList(entities);
   }
@@ -67,9 +67,20 @@ public class BeaconService {
   }
 
   // 신규 비컨 추가 메서드
-  public BeaconDTO createBeacon(BeaconDTO beaconDTO) {
+  public BeaconDTO createBeacon(String Uuid, BeaconDTO beaconDTO) {
     BeaconEntity entity = dToToEntitiy(beaconDTO);
+    entity.setUsed(false);
+    HospitalEntity hospital = hospitalService.findHospitalByUuid(Uuid);
+    if (!beaconDTO.getHospitalId().equals(hospital.getId())) {
+      log.warn("Hospital id mismatch");
+      throw new IllegalArgumentException("Hospital id mismatch");
+    }
 
+    BeaconEntity findEntity = beaconReposiroty.findByDeviceAddressAndValidIsTrue(entity.getDeviceAddress());
+    if (findEntity != null) {
+      log.warn("Beacon is already used");
+      throw new IllegalArgumentException("Beacon is already used");
+    }
     BeaconEntity createdEntity = beaconReposiroty.save(entity);
     log.info("Beacon created {}", createdEntity);
 
@@ -89,8 +100,15 @@ public class BeaconService {
       log.info("Beacon not found");
       throw new IllegalArgumentException("Beacon not found");
     }
+    BeaconEntity findEntity = beaconReposiroty.findByDeviceAddressAndValidIsTrue(entity.getDeviceAddress());
+    if (findEntity != null) {
+      log.warn("Beacon is already used");
+      throw new IllegalArgumentException("Beacon is already used");
+    }
+
 
     BeaconEntity getEntity = dToToEntitiy(beaconDTO);
+    entity.setDeviceAddress(beaconDTO.getDeviceAddress());
     entity.setHospital(getEntity.getHospital());
     entity.setLabel(getEntity.getLabel());
     entity.setLocation(getEntity.getLocation());
@@ -130,7 +148,7 @@ public class BeaconService {
         .hospital(hospital)
         .location(beaconDTO.getLocation())
         .label(beaconDTO.getLabel())
-        .used(beaconDTO.getUsed().equals(true))
+        .used(beaconDTO.getUsed() != null ? beaconDTO.getUsed() : false)
         .build();
   }
 

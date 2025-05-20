@@ -101,7 +101,8 @@ public class WasteService {
     WasteStatusEntity wasteStatus = wasteStatusService.getWasteStatusEntity(
         wasteDTO.getWasteStatusId());
 
-    wasteLogService.createWasteLog(wasteEntity, wasteStatus, userEntity, wasteEntity.getDescription());
+    wasteLogService.createWasteLog(wasteEntity, wasteStatus, userEntity,
+        wasteEntity.getDescription());
 
     return wasteMapper.toWasteDTO(responseEntity);
   }
@@ -182,7 +183,19 @@ public class WasteService {
     }
     updateEntity.setWasteStatus(wasteEntity.getWasteStatus());
 
-    updateEntity.setBeacon(wasteEntity.getBeacon());
+    // 기존 비콘과 다른경우
+    if (!wasteEntity.getBeacon().equals(updateEntity.getBeacon())) {
+      wasteEntity.getBeacon().setUsed(Boolean.FALSE);
+
+      // 이미 사용중인 비콘으로 변경하려 한 경우
+      if (wasteEntity.getBeacon().isUsed()) {
+        log.warn("Beacon is already Used");
+        throw new IllegalArgumentException("Beacon is already Used");
+      }
+      updateEntity.setBeacon(wasteEntity.getBeacon());
+      updateEntity.getBeacon().setUsed(Boolean.TRUE);
+    }
+
     updateEntity.setStorage(wasteEntity.getStorage());
     wasteRepository.save(updateEntity);
 
@@ -195,7 +208,7 @@ public class WasteService {
   }
 
   // 폐기물을 다음단계로 변경
-  public WasteDTO toNextStatus(String uuid, String wasteId, String description) {
+  public WasteDTO toNextStatus(String uuid, String wasteId, String description, Boolean isWarehouseManager) {
     WasteEntity waste = wasteRepository.findById(wasteId).orElse(null);
     if (waste == null) {
       log.warn("No waste found with id {}", wasteId);
@@ -208,6 +221,10 @@ public class WasteService {
     BeaconEntity beacon = waste.getBeacon();
 
     if (wasteStatusService.checkFinal(wasteStatus)) {
+      if(!isWarehouseManager){
+        log.warn("Waste can not be final status without warehouse manager's check");
+        throw new IllegalArgumentException("Waste can not be final status without warehouse manager's check");
+      }
       beacon.setUsed(Boolean.FALSE);
       waste.setValid(false);
       waste.setBeacon(null);

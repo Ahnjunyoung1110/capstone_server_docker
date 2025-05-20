@@ -1,21 +1,19 @@
 package com.capstone.capstone_server.dto;
 
 
-import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
+import java.time.LocalDateTime;
+
 @Builder
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SectorDTO {
-
-  private Integer id;
-  private String name;
-  private Integer hospital;
-  private Date createdAt;
-  private Date updatedAt;
+public class NotificationRequestDTO {
+    private String title;
+    private String message;
+    private LocalDateTime sendAt;
 }

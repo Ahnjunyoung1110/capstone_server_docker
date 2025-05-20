@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface HospitalRepository extends JpaRepository<HospitalEntity, Integer> {
 
-  Optional<HospitalEntity> findByHospitalNameOrHospitalCall(String name, String call);
+  Optional<HospitalEntity> findByHospitalNameOrHospitalCallAndValidIsTrue(String name, String call);
 
   List<HospitalEntity> findByValidTrue();
 

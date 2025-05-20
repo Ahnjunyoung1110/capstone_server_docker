@@ -20,7 +20,7 @@ public interface UserMapper {
   UserDTO EntityToDTO(UserEntity userEntity);
 
   @Mapping(source = "hospital.id", target = "hospitalId")
-  List<UserDTO> EntityToDTOList(List<UserDTO> userDTOList);
+  List<UserDTO> EntityToDTOList(List<UserEntity> entityList);
 
   @Named("mapRoles")
   static Set<RoleType> mapRoles(Set<RoleEntity> roles) {

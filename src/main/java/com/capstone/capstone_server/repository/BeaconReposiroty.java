@@ -6,7 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BeaconReposiroty extends JpaRepository<BeaconEntity, Integer> {
 
-  List<BeaconEntity> findAllByHospitalId(Integer hospitalId);
+  List<BeaconEntity> findAllByHospitalIdAndValidIsTrue(Integer hospitalId);
+
+  BeaconEntity findByDeviceAddressAndValidIsTrue(String deviceAddress);
 
   List<BeaconEntity> findAllByDeviceAddressInAndValidIsTrue(List<String> deviceAddresses);
 }

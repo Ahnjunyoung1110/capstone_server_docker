@@ -29,10 +29,15 @@ public class AuthFilter extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
       FilterChain filterChain)
       throws ServletException, IOException {
-    logger.info("Filtering request");
 
-    // 토큰이 필요없는 경로에 대해서 패스
     String path = request.getRequestURI();
+    if (path.startsWith("/fcm/token")) {
+      // FCM 토큰 등록은 인증 없이 통과시킴
+      filterChain.doFilter(request, response);
+      return;
+    }
+
+    logger.info("Filtering request");
     if (path.startsWith("/auth/signup") ||path.startsWith("/auth/signin") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs") || path.equals("/hospital")) {
       filterChain.doFilter(request, response);
       return;
