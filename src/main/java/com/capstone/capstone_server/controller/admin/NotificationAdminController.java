@@ -26,7 +26,7 @@ public class NotificationAdminController {
         log.info("병원 ID {}의 유저들에게 알림 전송 요청: title='{}', message='{}'",
                 hospitalId, request.getTitle(), request.getMessage());
 
-        notificationService.sendToHospitalUsers(hospitalId, request.getTitle(), request.getMessage());
+        notificationService.createNotificationForHospitalUsers(hospitalId, request.getTitle(), request.getMessage(), request.getSendAt());
         return ResponseEntity.ok().build();
     }
 }

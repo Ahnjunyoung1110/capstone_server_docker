@@ -32,5 +32,4 @@ public class FcmTokenEntity {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
-    // 생성자, getter, setter
 }
