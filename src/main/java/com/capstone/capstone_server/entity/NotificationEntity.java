@@ -19,6 +19,12 @@ public class NotificationEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private UserEntity user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DisinfectionScheduleEntity disinfectionSchedule;
+
+    @ManyToOne
+    private WasteEntity waste;
+
     private String title;
     private String message;
     private LocalDateTime sendAt; //전송 예정 시간, null이면 즉시 전송

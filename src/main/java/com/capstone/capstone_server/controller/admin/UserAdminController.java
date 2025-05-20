@@ -4,7 +4,8 @@ package com.capstone.capstone_server.controller.admin;
 import com.capstone.capstone_server.detail.CustomUserDetails;
 import com.capstone.capstone_server.dto.UserDTO;
 import com.capstone.capstone_server.entity.RoleEntity.RoleType;
-import com.capstone.capstone_server.service.UserService;
+import com.capstone.capstone_server.service.user.AdminUserService;
+import com.capstone.capstone_server.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -30,10 +31,12 @@ public class UserAdminController {
 
 
   private final UserService userService;
+  private final AdminUserService adminUserService;
 
   @Autowired
-  public UserAdminController(UserService userService) {
+  public UserAdminController(UserService userService, AdminUserService adminUserService) {
     this.userService = userService;
+    this.adminUserService = adminUserService;
   }
 
 
@@ -118,6 +121,25 @@ public class UserAdminController {
     boolean isAdmin = auth.getAuthorities().stream()
         .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
     UserDTO response = userService.updateUserByAdmin(user, details.getUsername(), id, isAdmin);
+    return ResponseEntity.ok(response);
+  }
+
+  @Operation(
+      summary = "어드민이 중간 관리자 계정을 추가합니다",
+      description = "어드민이 중간 관리자 계정을 추가합니다. 기본적인 param은 유저 생성과 같습니다."
+  )
+  public ResponseEntity<UserDTO> createModerator(@AuthenticationPrincipal CustomUserDetails details,
+      @RequestBody UserDTO user) {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    boolean isAdmin = auth.getAuthorities().stream()
+        .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+    log.info("createModerator {} by {}", user, auth.getName());
+    if (!isAdmin) {
+      log.warn("Moderator can not assign moderator role to user");
+      throw new IllegalArgumentException("Moderator can not assign moderator role to user");
+    }
+
+    UserDTO response = adminUserService.createModerateUser(user);
     return ResponseEntity.ok(response);
   }
 }
