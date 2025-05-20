@@ -84,8 +84,10 @@ public class NotificationService {
                             .build())
                     .build();
 
-            FirebaseMessaging.getInstance().send(fcmMessage);
-            log.info("FCM 전송 성공 - userId: {}", user.getUuid());
+
+            String response = FirebaseMessaging.getInstance().send(fcmMessage);
+
+            log.info("FCM 전송 성공: {}, userId: {}", response, user.getUuid());
         } catch (Exception e) {
             log.error("FCM 전송 실패 - userId: {}", user.getUuid(), e);
         }
