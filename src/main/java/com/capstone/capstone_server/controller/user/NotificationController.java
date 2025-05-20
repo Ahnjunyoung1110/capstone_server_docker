@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user/notifications")
+@RequestMapping("/notifications")
 public class NotificationController {
     private final NotificationService notificationService;
 

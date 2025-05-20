@@ -65,7 +65,7 @@ public class NotificationService {
     }
 
     public List<NotificationResponseDTO> getNotificationsForUser(String uuid) {
-        List<NotificationEntity> notifications = notificationRepository.findByUser_UuidOrderByReceivedAtDesc(uuid);
+        List<NotificationEntity> notifications = notificationRepository.findByUser_UuidAndSentTrueOrderByReceivedAtDesc(uuid);
         return notifications.stream()
                 .map(NotificationResponseDTO::from)
                 .collect(Collectors.toList());
