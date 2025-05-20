@@ -21,5 +21,7 @@ public class NotificationEntity {
 
     private String title;
     private String message;
-    private LocalDateTime sentAt;
+    private LocalDateTime sendAt; //전송 예정 시간, null이면 즉시 전송
+    private boolean sent; //전송 여부
+    private LocalDateTime receivedAt;//전송된 시간
 }

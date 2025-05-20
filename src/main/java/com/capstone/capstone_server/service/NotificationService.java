@@ -23,7 +23,7 @@ public class NotificationService {
     private final UserRepository userRepository;
     private final NotificationRepository notificationRepository;
 
-    public void sendToHospitalUsers(Integer hospitalId, String title, String message) {
+    public void sendToHospitalUsers(Integer hospitalId, String title, String message, LocalDateTime sendAt) {
         List<UserEntity> users = userRepository.findByHospitalId(hospitalId);
 
         for (UserEntity user : users) {
@@ -33,34 +33,39 @@ public class NotificationService {
                 continue;
             }
 
-            try {
-                Message fcmMessage = Message.builder()
-                        .setToken(token)
-                        .setNotification(Notification.builder()
-                                .setTitle(title)
-                                .setBody(message)
-                                .build())
-                        .build();
+            NotificationEntity.NotificationEntityBuilder builder = NotificationEntity.builder()
+                    .user(user)
+                    .title(title)
+                    .message(message)
+                    .sendAt(sendAt)
+                    .sent(false);
 
-                FirebaseMessaging.getInstance().send(fcmMessage);
+            // 즉시 전송 조건
+            if (sendAt == null || sendAt.isBefore(LocalDateTime.now())) {
+                try {
+                    Message fcmMessage = Message.builder()
+                            .setToken(token)
+                            .setNotification(Notification.builder()
+                                    .setTitle(title)
+                                    .setBody(message)
+                                    .build())
+                            .build();
 
-                // 알림 DB 저장
-                NotificationEntity notification = NotificationEntity.builder()
-                        .user(user)
-                        .title(title)
-                        .message(message)
-                        .sentAt(LocalDateTime.now())
-                        .build();
+                    FirebaseMessaging.getInstance().send(fcmMessage);
 
-                notificationRepository.save(notification);
-            } catch (Exception e) {
-                log.error("FCM 전송 실패 - userId: {}, token: {}", user.getUuid(), token, e);
+                    builder.sent(true);
+                    builder.receivedAt(LocalDateTime.now());
+                } catch (Exception e) {
+                    log.error("FCM 전송 실패 - userId: {}, token: {}", user.getUuid(), token, e);
+                }
             }
+
+            notificationRepository.save(builder.build());
         }
     }
 
     public List<NotificationResponseDTO> getNotificationsForUser(String uuid) {
-        List<NotificationEntity> notifications = notificationRepository.findByUser_UuidOrderBySentAtDesc(uuid);
+        List<NotificationEntity> notifications = notificationRepository.findByUser_UuidOrderByReceivedAtDesc(uuid);
         return notifications.stream()
                 .map(NotificationResponseDTO::from)
                 .collect(Collectors.toList());
