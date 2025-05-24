@@ -16,7 +16,7 @@ public class FirebaseConfig {
     public void init() throws IOException {
         InputStream serviceAccount = getClass()
                 .getClassLoader()
-                .getResourceAsStream("capstonealram-firebase-adminsdk-fbsvc-7c50ae5a8a.json");
+                .getResourceAsStream("capstonealram-firebase-adminsdk.json");
 
         FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
