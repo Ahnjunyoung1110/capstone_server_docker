@@ -29,7 +29,8 @@ public class BeaconService {
   // 소속 병원 전체 비컨 조회 메서드
   public List<BeaconDTO> getAllBeacons(String uuid) {
     HospitalEntity findhospital = hospitalService.findHospitalByUuid(uuid);
-    List<BeaconEntity> entities = beaconReposiroty.findAllByHospitalIdAndValidIsTrue(findhospital.getId());
+    List<BeaconEntity> entities = beaconReposiroty.findAllByHospitalIdAndValidIsTrue(
+        findhospital.getId());
 
     return beaconMapper.toBeaconDTOList(entities);
   }
@@ -72,7 +73,8 @@ public class BeaconService {
       throw new IllegalArgumentException("Hospital id mismatch");
     }
 
-    BeaconEntity findEntity = beaconReposiroty.findByDeviceAddressAndValidIsTrue(entity.getDeviceAddress());
+    BeaconEntity findEntity = beaconReposiroty.findByDeviceAddressAndValidIsTrue(
+        entity.getDeviceAddress());
     if (findEntity != null) {
       log.warn("Beacon is already used");
       throw new IllegalArgumentException("Beacon is already used");
@@ -96,12 +98,12 @@ public class BeaconService {
       log.info("Beacon not found");
       throw new IllegalArgumentException("Beacon not found");
     }
-    BeaconEntity findEntity = beaconReposiroty.findByDeviceAddressAndValidIsTrue(entity.getDeviceAddress());
-    if (findEntity != null) {
-      log.warn("Beacon is already used");
-      throw new IllegalArgumentException("Beacon is already used");
+    BeaconEntity findEntity = beaconReposiroty.findByDeviceAddressAndValidIsTrue(
+        entity.getDeviceAddress());
+    if (findEntity != null && findEntity.getId() != id) {
+      log.warn("같은 맥주소가 존재합니다.");
+      throw new IllegalArgumentException("같은 맥주소가 존재합니다.");
     }
-
 
     BeaconEntity getEntity = dToToEntitiy(beaconDTO);
     entity.setDeviceAddress(beaconDTO.getDeviceAddress());
