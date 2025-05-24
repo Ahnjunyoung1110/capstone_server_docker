@@ -186,7 +186,8 @@ public class WasteService {
       log.warn("beaconEntities is null or empty");
       throw new IllegalArgumentException("beaconEntities is null or empty");
     }
-    List<WasteEntity> wasteEntities = wasteRepository.findAllByBeaconIn(beaconEntities);
+    List<WasteEntity> wasteEntities = wasteRepository.findAllByBeaconInAndValidIsTrue(
+        beaconEntities);
     if (wasteEntities == null || wasteEntities.isEmpty()) {
       log.warn("wasteEntities is null or empty");
       throw new IllegalArgumentException("wasteEntities is null or empty");
