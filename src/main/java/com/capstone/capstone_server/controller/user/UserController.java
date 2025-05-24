@@ -7,7 +7,7 @@ import com.capstone.capstone_server.dto.UserDTO;
 import com.capstone.capstone_server.entity.UserEntity;
 import com.capstone.capstone_server.mapper.UserMapper;
 import com.capstone.capstone_server.security.TokenProvider;
-import com.capstone.capstone_server.service.UserService;
+import com.capstone.capstone_server.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +36,8 @@ public class UserController {
     this.userService = userService;
     this.userMapper = userMapper;
   }
+
+  // uuid로 유저를 검색합니다.
 
   // 회원가입 메서드
   @Operation(
@@ -121,7 +123,6 @@ public class UserController {
 
     return ResponseEntity.ok().build();
   }
-
 
 
 }

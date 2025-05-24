@@ -12,11 +12,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class WasteLogDTO {
+
   private Integer id;
   private String description;
   private Integer statusId;
   private String wasteId;
   private String userId;
+  private String userName;
+  private String name;
   private Date createdAt;
   private Date updatedAt;
 }

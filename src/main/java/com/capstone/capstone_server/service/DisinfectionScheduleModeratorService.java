@@ -8,6 +8,7 @@ import com.capstone.capstone_server.entity.SectorEntity;
 import com.capstone.capstone_server.mapper.DisinfectionScheduleMapper;
 import com.capstone.capstone_server.repository.DisinfectionScheduleRepository;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +23,18 @@ public class DisinfectionScheduleModeratorService {
   private final HospitalService hospitalService;
   private final DisinfectionScheduleMapper disinfectionScheduleMapper;
   private final SectorService sectorService;
+  private final NotificationService notificationService;
 
   @Autowired
   public DisinfectionScheduleModeratorService(
       DisinfectionScheduleRepository disinfectionScheduleRepository,
       HospitalService hospitalService, DisinfectionScheduleMapper disinfectionScheduleMapper,
-      SectorService sectorService) {
+      SectorService sectorService, NotificationService notificationService) {
     this.disinfectionScheduleRepository = disinfectionScheduleRepository;
     this.hospitalService = hospitalService;
     this.disinfectionScheduleMapper = disinfectionScheduleMapper;
     this.sectorService = sectorService;
+    this.notificationService = notificationService;
   }
 
   public List<DisinfectionScheduleDTO> getDisinfectionSchedule(String uuid, LocalDateTime start,
@@ -54,7 +57,26 @@ public class DisinfectionScheduleModeratorService {
     DisinfectionScheduleEntity savedEntity = disinfectionScheduleRepository.save(
         disinfectionScheduleEntity);
 
-    // 알람 추가 1시간전 5분전 1분전
+    Integer hospitalId = disinfectionScheduleEntity.getHospital().getId();
+    String sectorName = disinfectionScheduleEntity.getSector().getName();
+    LocalDateTime time = disinfectionScheduleEntity.getStartTime();
+    // 알람 추가 08시, 방역 시작 10분전, 시작
+    notificationService.createNotificationForHospitalUsers(
+        hospitalId,
+        "금일 " + sectorName + " 방역이 " + time.toLocalTime()
+            .format(DateTimeFormatter.ofPattern("HH:mm")) + " 에 존재합니다.", "당일 방역 알람입니다.",
+        time.toLocalDate().atTime(8, 0), savedEntity, null);
+
+    notificationService.createNotificationForHospitalUsers(
+        hospitalId,
+        sectorName + " 방역 10분 전 알람", "방역 10분 전 알람입니다.",
+        time.minusMinutes(10), savedEntity, null);
+
+    notificationService.createNotificationForHospitalUsers(
+        hospitalId,
+        sectorName + " 방역 시작 알람", "방역 시작 알람입니다.",
+        time, savedEntity, null);
+
     return disinfectionScheduleMapper.entityToDto(savedEntity);
 
   }
@@ -73,12 +95,34 @@ public class DisinfectionScheduleModeratorService {
     }
 
     findEntity.setSector(disinfectionScheduleEntity.getSector());
-    findEntity.setStartTime(disinfectionScheduleEntity.getStartTime());
+    if (!findEntity.getStartTime().equals(disinfectionScheduleEntity.getStartTime())) {
+      findEntity.setStartTime(disinfectionScheduleEntity.getStartTime());
+      // 기존 알람 삭제
+      notificationService.deleteNotificationByDisinfection(findEntity.getId());
+      Integer hospitalId = disinfectionScheduleEntity.getHospital().getId();
+      String sectorName = disinfectionScheduleEntity.getSector().getName();
+      LocalDateTime time = disinfectionScheduleEntity.getStartTime();
+      // 알람 추가 08시, 방역 시작 10분전, 시작
+      notificationService.createNotificationForHospitalUsers(
+          hospitalId,
+          "금일 " + sectorName + " 방역이 " + time.toLocalTime()
+              .format(DateTimeFormatter.ofPattern("HH:mm")) + " 에 존재합니다.", "당일 방역 알람입니다.",
+          time.toLocalDate().atTime(8, 0),findEntity,null);
+
+      notificationService.createNotificationForHospitalUsers(
+          hospitalId,
+          sectorName + " 방역 10분 전 알람", "방역 10분 전 알람입니다.",
+          time.minusMinutes(10),findEntity,null);
+
+      notificationService.createNotificationForHospitalUsers(
+          hospitalId,
+          sectorName + " 방역 시작 알람", "방역 시작 알람입니다.",
+          time,findEntity,null);
+    }
+
     findEntity.setEndTime(disinfectionScheduleEntity.getEndTime());
     findEntity.setDescription(disinfectionScheduleDTO.getDescription());
     findEntity.setStatus(disinfectionScheduleDTO.getStatus());
-
-    // 알람 삭제 후 변경
 
     DisinfectionScheduleEntity savedEntity = disinfectionScheduleRepository.save(findEntity);
     return disinfectionScheduleMapper.entityToDto(savedEntity);
@@ -94,6 +138,7 @@ public class DisinfectionScheduleModeratorService {
     }
 
     // 알람 삭제
+    notificationService.deleteNotificationByDisinfection(disinfectionScheduleId);
 
     disinfectionScheduleRepository.deleteById(disinfectionScheduleId);
 
@@ -103,34 +148,40 @@ public class DisinfectionScheduleModeratorService {
   public DisinfectionScheduleDTO nextDisinfectionSchedule(String uuid,
       Integer disinfectionScheduleId, DisinfectionStatus status) {
     log.info("nextDisinfectionSchedule {} to {}", disinfectionScheduleId, status);
-    DisinfectionScheduleEntity findEntity = disinfectionScheduleRepository.findById(disinfectionScheduleId).orElse(null);
+    DisinfectionScheduleEntity findEntity = disinfectionScheduleRepository.findById(
+        disinfectionScheduleId).orElse(null);
     if (findEntity == null) {
       log.info("DisinfectionSchedule not found");
       throw new IllegalArgumentException("DisinfectionSchedule not found");
     }
 
     HospitalEntity hospital = hospitalService.findHospitalByUuid(uuid);
-    if(!findEntity.getHospital().equals(hospital)) {
+    if (!findEntity.getHospital().equals(hospital)) {
       log.info("Hospital not equal");
       throw new IllegalArgumentException("Hospital not equal");
     }
 
-    if(findEntity.getStatus().equals(status)) {
+    if (findEntity.getStatus().equals(status)) {
       log.info("Status equal");
       throw new IllegalArgumentException("Status equal");
     }
 
-    if(status == DisinfectionStatus.IN_PROGRESS && !findEntity.getStatus().equals(DisinfectionStatus.SCHEDULED)){
+    if (status == DisinfectionStatus.IN_PROGRESS && !findEntity.getStatus()
+        .equals(DisinfectionStatus.SCHEDULED)) {
       log.info("DisinfectionSchedule already in progress");
       throw new IllegalArgumentException("DisinfectionSchedule already in progress");
     }
 
-    if((status == DisinfectionStatus.COMPLETED || status == DisinfectionStatus.FAILED) && !findEntity.getStatus().equals(DisinfectionStatus.IN_PROGRESS) ) {
+    if ((status == DisinfectionStatus.COMPLETED || status == DisinfectionStatus.FAILED)
+        && !findEntity.getStatus().equals(DisinfectionStatus.IN_PROGRESS)) {
       log.info("Wrong schedule status");
       throw new IllegalArgumentException("Wrong schedule status");
     }
 
     findEntity.setStatus(status);
+    if(status == DisinfectionStatus.COMPLETED){
+      notificationService.createNotificationForHospitalUsers(findEntity.getHospital().getId(), "방역 완료 알람", "방역이 완료되었습니다.", null, findEntity,null);
+    }
     DisinfectionScheduleEntity savedEntity = disinfectionScheduleRepository.save(findEntity);
     return disinfectionScheduleMapper.entityToDto(savedEntity);
   }

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import com.capstone.capstone_server.dto.UserDTO;
 import com.capstone.capstone_server.repository.UserRepository;
+import com.capstone.capstone_server.service.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

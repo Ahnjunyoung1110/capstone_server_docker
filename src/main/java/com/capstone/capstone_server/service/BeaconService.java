@@ -52,10 +52,6 @@ public class BeaconService {
       log.info("Beacon cannot find or use");
       throw new IllegalArgumentException("Beacon not found");
     }
-    if (entity.isUsed()) {
-      log.info("Beacon is used");
-      throw new IllegalArgumentException("Beacon is used");
-    }
 
     return entity;
   }
@@ -112,7 +108,6 @@ public class BeaconService {
     entity.setHospital(getEntity.getHospital());
     entity.setLabel(getEntity.getLabel());
     entity.setLocation(getEntity.getLocation());
-    entity.setUsed(getEntity.isUsed());
     BeaconEntity updatedEntity = beaconReposiroty.save(entity);
 
     return beaconMapper.toBeaconDTO(updatedEntity);

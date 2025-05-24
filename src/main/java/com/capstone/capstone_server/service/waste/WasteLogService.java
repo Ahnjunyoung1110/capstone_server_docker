@@ -8,6 +8,7 @@ import com.capstone.capstone_server.entity.WasteLogEntity;
 import com.capstone.capstone_server.entity.WasteStatusEntity;
 import com.capstone.capstone_server.mapper.WasteLogMapper;
 import com.capstone.capstone_server.repository.WasteLogRepository;
+import com.capstone.capstone_server.service.user.UserService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,14 @@ public class WasteLogService {
 
   private final WasteLogRepository wasteLogRepository;
   private final WasteLogMapper wasteLogMapper;
+  private final UserService userService;
 
   @Autowired
-  public WasteLogService(WasteLogRepository wasteLogRepository, WasteLogMapper wasteLogMapper) {
+  public WasteLogService(WasteLogRepository wasteLogRepository, WasteLogMapper wasteLogMapper,
+      UserService userService) {
     this.wasteLogRepository = wasteLogRepository;
     this.wasteLogMapper = wasteLogMapper;
+    this.userService = userService;
   }
 
   // 폐기물의 상태를 변경할때 마다 log를 기록하는 함수
@@ -46,8 +50,13 @@ public class WasteLogService {
     log.info("Waste log retrieved {}", wasteId);
     List<WasteLogEntity> logEntities = wasteLogRepository.findAllByWasteIdOrderByStatusStatusLevelAsc(
         wasteId);
-    log.info("Waste log retrieved {}", logEntities);
-    return wasteLogMapper.entityToDtoList(logEntities);
+    List<WasteLogDTO> logDto = wasteLogMapper.entityToDtoList(logEntities);
+    for (WasteLogDTO log : logDto) {
+      UserEntity user = userService.findByUuid(log.getUserId());
+      log.setUserName(user.getUsername());
+      log.setName(user.getName());
+    }
+    return logDto;
   }
 
 }
