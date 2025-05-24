@@ -6,6 +6,8 @@ WORKDIR /app
 # gradle 디렉토리 복사
 COPY gradle /app/gradle
 
+COPY ./config/firebase-adminsdk.json /app/src/main/resources/
+
 # 캐시를 위한 gradlew + build 설정 복사
 COPY gradlew .
 COPY build.gradle settings.gradle ./
