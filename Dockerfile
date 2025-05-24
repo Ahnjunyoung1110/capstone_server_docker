@@ -6,8 +6,8 @@ WORKDIR /app
 # gradle 디렉토리 복사
 COPY gradle /app/gradle
 
-# ✅ firebase-adminsdk.json 복사 (경로 수정)
-COPY config/firebase-adminsdk.json src/main/resources/
+
+COPY src/main/resources/capstonealram-firebase-adminsdk.json src/main/resources/
 
 # 캐시를 위한 gradlew + 설정 복사
 COPY gradlew .
