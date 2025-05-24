@@ -16,3 +16,14 @@ RUN ./gradlew dependencies || return 0
 COPY . .
 RUN chmod +x gradlew  # gradlew 다시 덮어쓰였을 경우 대비
 RUN ./gradlew clean build -x test
+
+
+# --- 실행 단계 ---
+FROM openjdk:17-jdk-alpine
+
+WORKDIR /app
+
+COPY --from=build /app/build/libs/*.jar app.jar
+
+EXPOSE 8080
+CMD ["java", "-jar", "app.jar"]

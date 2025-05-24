@@ -42,5 +42,6 @@ public interface WasteRepository extends JpaRepository<WasteEntity, String> {
   @Query("SELECT MAX(w.id) FROM WasteEntity w WHERE w.id LIKE :prefix")
   String findMaxIdLike(@Param("prefix") String prefix);
 
-  List<WasteEntity> findAllByBeaconIn(List<BeaconEntity> beaconEntities);
+
+  List<WasteEntity> findAllByBeaconInAndValidIsTrue(List<BeaconEntity> beaconEntities);
 }
