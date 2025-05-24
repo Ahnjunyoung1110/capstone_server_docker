@@ -3,28 +3,30 @@ FROM gradle:8.0.2-jdk17 AS build
 
 WORKDIR /app
 
-
-
-# Gradle 관련 캐시 유지
+# gradlew 파일 복사 + 실행 권한 부여
 COPY gradlew .
+RUN chmod +x gradlew
+
+# gradle 디렉토리 복사
 COPY gradle /app/gradle
-RUN ./gradlew --version || return 0  # 캐시 준비용
 
+# 캐시를 위한 기본 명령 실행
+RUN ./gradlew --version || return 0
 
-# 의존성 먼저 복사 → 캐시 분리
+# 의존성 파일 복사
 COPY build.gradle settings.gradle ./
 RUN ./gradlew dependencies || return 0
 
-# 전체 코드 복사 후 빌드
+# 전체 프로젝트 복사 후 빌드
 COPY . .
 RUN ./gradlew clean build -x test
+
 
 # --- 실행 단계 ---
 FROM openjdk:17-jdk-alpine
 
 WORKDIR /app
 
-# 빌드 스테이지에서 생성된 jar를 이 단계로 복사
 COPY --from=build /app/build/libs/*.jar app.jar
 
 EXPOSE 8080

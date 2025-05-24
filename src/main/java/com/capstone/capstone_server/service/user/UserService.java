@@ -224,7 +224,7 @@ public class UserService {
   public UserDTO updateUserRole(String userUuid, Set<RoleType> roles) {
     if (userUuid == null) {
       log.warn("userId is null");
-      throw new IllegalArgumentException("userEntity is null");
+      throw new IllegalArgumentException("userId is null");
     }
 
     if (roles == null) {
@@ -267,6 +267,9 @@ public class UserService {
       if (userEntity != null) {
         userEntity.setFcmToken(null);
         userRepository.save(userEntity);
+      } else {
+        log.warn("User with uuid {} not found", uuid);
+        throw new IllegalArgumentException("Id is wrong");
       }
     }
     log.info("User with uuid {} has been logged out", uuid);

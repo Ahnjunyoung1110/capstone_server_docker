@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -70,10 +71,11 @@ public class NotificationService {
 
     for (NotificationEntity noti : dueNotifications) {
       try {
-        sendFcmToUser(noti.getUser(), noti.getTitle(), noti.getMessage());
+
         noti.setSent(true);
         noti.setReceivedAt(now);
-        notificationRepository.save(noti);
+        NotificationEntity response = notificationRepository.save(noti);
+        sendFcmToUser(response.getUser(), response.getTitle(), response.getMessage());
       } catch (Exception e) {
         log.error("예약 알림 전송 실패 - ID: {}", noti.getId(), e);
       }
@@ -119,6 +121,7 @@ public class NotificationService {
   }
 
   // 기존 폐기물 알람을 삭제하는 함수
+  @Transactional
   public void deleteNotificationByWaste(WasteEntity wasteEntity) {
     log.info("Delete notification by Waste: {}", wasteEntity.getId());
     notificationRepository.deleteByWaste(wasteEntity);

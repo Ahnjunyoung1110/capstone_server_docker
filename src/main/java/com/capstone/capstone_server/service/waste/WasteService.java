@@ -17,6 +17,7 @@ import com.capstone.capstone_server.service.StorageService;
 import com.capstone.capstone_server.service.user.UserService;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
@@ -134,8 +135,7 @@ public class WasteService {
     // 만약 알람 시간이 오늘이고, 10시가 넘었다면 다음날 08시로 설정
     if (targetTime.getHour() >= 22) { // 22시 넘어가면 너무 늦다고 판단
       targetTime = targetTime.plusDays(1).toLocalDate().atTime(8, 0); // 다음날 08:00
-    }
-    else {
+    } else {
       // 8시 이전이면 8시로 설정
       targetTime = targetTime.withHour(8).withMinute(0).withSecond(0).withNano(0);
     }
@@ -197,7 +197,6 @@ public class WasteService {
   // 폐기물 수정
   public WasteDTO updateWaste(WasteDTO wasteDTO, String id, String uuid) {
     WasteEntity wasteEntity = dtoToEntity(wasteDTO);
-    log.info("update waste : {}", wasteEntity);
 
     WasteEntity updateEntity = wasteRepository.findById(id).orElse(null);
     if (updateEntity == null) {
@@ -205,21 +204,11 @@ public class WasteService {
       throw new IllegalArgumentException("Cannot update waste");
     }
 
-    // 이걸 업데이트 할 수 있어야 할까?
-    updateEntity.setHospital(wasteEntity.getHospital());
-    updateEntity.setWasteType(wasteEntity.getWasteType());
     log.info("update waste : {}", wasteEntity);
-    // 순서대로 Status를 변경하는것이 맞는지 확인
-    WasteStatusEntity wasteStatus = wasteStatusService.transportTrue(wasteEntity.getWasteStatus(),
-        -1);
-    if (wasteStatus != updateEntity.getWasteStatus()) {
-      log.warn("Wrong waste status now:{} Update:{}", wasteStatus, updateEntity.getWasteStatus());
-      throw new IllegalArgumentException("Wrong waste status now");
-    }
-    updateEntity.setWasteStatus(wasteEntity.getWasteStatus());
 
     // 기존 비콘과 다른경우
-    if (!wasteEntity.getBeacon().equals(updateEntity.getBeacon())) {
+    if (!wasteEntity.getBeacon().getId()
+        .equals(updateEntity.getBeacon().getId())) {
       // 비콘의 소속 병원이 유저의 병원과 다른경우
       if (!wasteEntity.getBeacon().getHospital().equals(updateEntity.getHospital())) {
         log.warn("Hospital mismatch");
@@ -235,6 +224,34 @@ public class WasteService {
       updateEntity.getBeacon().setUsed(Boolean.TRUE);
     }
 
+    // 기존 폐기물 Type과 다른경우ㅜ
+    if (!wasteEntity.getWasteType().getId().equals(updateEntity.getWasteType().getId())) {
+
+      // 기존 알람 변경
+      notificationService.deleteNotificationByWaste(wasteEntity);
+
+      LocalDateTime now = LocalDateTime.now();
+      LocalDateTime createdAt = updateEntity.getCreatedAt().toInstant()
+          .atZone(ZoneId.systemDefault())
+          .toLocalDateTime();
+      Integer period = wasteEntity.getWasteType().getPeriod();
+      // 폐기물 종류 변경시 이미 보관 기일이 만료된 경우
+      if (createdAt.plusDays(period).isBefore(now)) {
+        log.warn("이미 보관 기일이 지난 타입으로 변경하려 시도하고 있습니다.");
+        throw new IllegalArgumentException("이미 보관 기일이 지난 타입으로 변경하려 시도하고 있습니다.");
+      }
+
+      updateEntity.setWasteType(wasteEntity.getWasteType());
+      LocalDateTime targetTime = getLocalDateTime(createdAt, period);
+      // 알람을 생성
+      notificationService.createNotificationForHospitalUsers(updateEntity.getHospital().getId(),
+          "보관 기일 임박 알람",
+          now.plusDays(period).format(DateTimeFormatter.ofPattern("MM-dd HH:mm"))
+              + " 에 폐기물 보관 기일이 만료합니다.", targetTime, null, wasteEntity);
+    }
+
+    updateEntity.setDescription(wasteDTO.getDescription());
+    // 창고 변경
     updateEntity.setStorage(wasteEntity.getStorage());
     wasteRepository.save(updateEntity);
 

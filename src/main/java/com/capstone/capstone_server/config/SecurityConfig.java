@@ -30,7 +30,8 @@ public class SecurityConfig {
         .cors(Customizer.withDefaults())
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(authz -> authz
-            .requestMatchers("/", "/auth/**", "/swagger-ui/**", "/v3/api-docs/**",
+            .requestMatchers("/", "/auth/signup", "/auth/signin", "/swagger-ui/**",
+                "/v3/api-docs/**",
                 "/swagger-ui.html", "/hospital", "/fcm/token").permitAll()
             .requestMatchers("/admin/**").hasAnyRole("ADMIN", "MODERATOR")
             .anyRequest().authenticated())

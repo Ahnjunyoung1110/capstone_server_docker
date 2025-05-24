@@ -37,6 +37,8 @@ public class UserController {
     this.userMapper = userMapper;
   }
 
+  // uuid로 유저를 검색합니다.
+
   // 회원가입 메서드
   @Operation(
       summary = "회원가입",

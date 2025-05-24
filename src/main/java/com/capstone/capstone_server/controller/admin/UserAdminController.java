@@ -17,6 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -128,6 +129,7 @@ public class UserAdminController {
       summary = "어드민이 중간 관리자 계정을 추가합니다",
       description = "어드민이 중간 관리자 계정을 추가합니다. 기본적인 param은 유저 생성과 같습니다."
   )
+  @PostMapping("/createMd")
   public ResponseEntity<UserDTO> createModerator(@AuthenticationPrincipal CustomUserDetails details,
       @RequestBody UserDTO user) {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();

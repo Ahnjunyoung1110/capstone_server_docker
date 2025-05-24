@@ -18,8 +18,8 @@ public class AdminUserService {
   }
 
   public UserDTO createModerateUser(UserDTO userDTO) {
-    userService.createUser(userDTO);
-    return userService.updateUserRole(userDTO.getUuid(), Set.of(RoleType.MODERATOR,
+    UserDTO dtos = userService.createUser(userDTO);
+    return userService.updateUserRole(dtos.getUuid(), Set.of(RoleType.MODERATOR,
         RoleType.USER));
   }
 
