@@ -7,7 +7,7 @@ WORKDIR /app
 COPY gradle /app/gradle
 
 
-COPY src/main/resources/capstonealram-firebase-adminsdk.json src/main/resources/
+COPY backend/src/main/resources/capstonealram-firebase-adminsdk.json backend/src/main/resources/
 
 # 캐시를 위한 gradlew + 설정 복사
 COPY gradlew .
