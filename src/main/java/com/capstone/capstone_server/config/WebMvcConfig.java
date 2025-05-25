@@ -18,7 +18,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     registry.addMapping("/**")
         .allowedOrigins(
             "http://192.168.45.192:3000/",
-            "http://localhost:3000/"
+            "http://localhost:3000/",
+            "https://medicap.kro.kr"
         )
         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 해당 요청 종류만 허용
         .allowCredentials(true)
