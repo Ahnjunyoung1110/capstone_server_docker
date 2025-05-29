@@ -154,7 +154,7 @@ public class UserService {
     }
 
     String encryptedPassword = findByUuid(uuid).getPassword();
-    if (!passwordEncoder.matches(encryptedPassword, userDTO.getPassword())) {
+    if (!passwordEncoder.matches(userDTO.getPassword(), encryptedPassword)) {
       throw new IllegalArgumentException("Password is wrong");
     }
     Optional<UserEntity> optionalUserEntity = userRepository.findByUsername(
