@@ -107,6 +107,7 @@ public class NotificationService {
   }
 
   // 기존 방역 알람을 삭제하는 함수
+  @Transactional
   public void deleteNotificationByDisinfection(Integer disinfectionId) {
     log.info("Delete notification by ID: {}", disinfectionId);
     notificationRepository.deleteByDisinfectionScheduleId(disinfectionId);
