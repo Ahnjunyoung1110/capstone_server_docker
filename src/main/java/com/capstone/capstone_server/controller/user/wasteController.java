@@ -224,10 +224,10 @@ public class wasteController {
       description = "유저 권한으로 폐기물을 삭제(비활성화) 합니다."
   )
   @DeleteMapping("/deleteWaste/{wasteId}")
-  public ResponseEntity<?> deleteWaste(@PathVariable String wasteId) {
+  public ResponseEntity<?> deleteWaste(@PathVariable String wasteId, @AuthenticationPrincipal CustomUserDetails details) {
     log.info("deleteWaste request, wasteId: {}", wasteId);
 
-    wasteService.deleteWaste(wasteId);
+    wasteService.deleteWaste(wasteId, details.getUsername());
 
     return ResponseEntity.ok().build();
   }

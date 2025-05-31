@@ -15,6 +15,7 @@ import com.capstone.capstone_server.service.HospitalService;
 import com.capstone.capstone_server.service.NotificationService;
 import com.capstone.capstone_server.service.StorageService;
 import com.capstone.capstone_server.service.user.UserService;
+import jakarta.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -124,7 +125,7 @@ public class WasteService {
     notificationService.createNotificationForHospitalUsers(userEntity.getHospital().getId(),
         "보관 기일 임박 알람",
         now.plusDays(period).format(DateTimeFormatter.ofPattern("MM-dd HH:mm"))
-            + " 에 폐기물 보관 기일이 만료합니다.", targetTime, null, wasteEntity);
+            + " 에 폐기물 " + wasteEntity.getId() + " 의 보관 기일이 만료합니다.", targetTime, null, wasteEntity);
     return wasteMapper.toWasteDTO(responseEntity);
   }
 
@@ -248,7 +249,8 @@ public class WasteService {
       notificationService.createNotificationForHospitalUsers(updateEntity.getHospital().getId(),
           "보관 기일 임박 알람",
           now.plusDays(period).format(DateTimeFormatter.ofPattern("MM-dd HH:mm"))
-              + " 에 폐기물 보관 기일이 만료합니다.", targetTime, null, wasteEntity);
+              + " 에 폐기물 " + wasteEntity.getId() + " 의 보관 기일이 만료합니다.", targetTime, null,
+          wasteEntity);
     }
 
     updateEntity.setDescription(wasteDTO.getDescription());
@@ -304,7 +306,8 @@ public class WasteService {
   }
 
   // 폐기물 삭제
-  public void deleteWaste(String id) {
+  @Transactional
+  public void deleteWaste(String id, String uuid) {
     WasteEntity wasteEntity = wasteRepository.findById(id).orElse(null);
     if (wasteEntity == null) {
       log.error("Cannot delete waste : {}", id);
@@ -316,6 +319,10 @@ public class WasteService {
     wasteEntity.getBeacon().setUsed(Boolean.FALSE);
 
     notificationService.deleteNotificationByWaste(wasteEntity);
+
+    wasteLogService.createWasteLog(wasteEntity, wasteEntity.getWasteStatus(),
+        userService.findByUuid(uuid), "폐기물이 삭제처리 되었습니다.");
+
     wasteRepository.save(wasteEntity);
   }
 
